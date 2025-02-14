@@ -1,0 +1,57 @@
+@import "containers"
+@import "mixins"
+
+
+.title-section
+  position: relative
+  display: flex
+  align-items: center
+  gap: 12px
+  font-weight: 500
+  font-size: 36px
+  &::before
+    content: ""
+    display: inline-block
+    width: 24px
+    height: 24px
+    border-radius: 50%
+    background-color: currentColor
+  @include mobile
+    font-size: 24px
+    &::before
+      width: 20px
+      height: 20px
+  &.yellow::before
+    background-color: #F0BD26
+  &.green::before
+    background-color: #477956
+  &.red::before
+    background-color: #900707
+
+
+
+
+.button
+  line-height: 1
+  font-size: 18px
+  padding: 12px 24px
+  border: 1px solid transparent
+  border-radius: 12px
+  transition: 0.2s ease-in
+  @include mobile
+    font-size: 16px
+    padding: 8px 16px
+  &.button-cancel
+    background-color: #900707
+    &:hover
+      background-color: #A02A2A
+  &.button-success
+    background-color: #358308
+    &:hover
+      background-color: #52952B
+  &.button-outline
+    border-color: #FFFFFF4D
+    &:hover
+      background-color: #55575C
+      border-color: #55575C
+

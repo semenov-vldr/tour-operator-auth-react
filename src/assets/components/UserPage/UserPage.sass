@@ -1,0 +1,90 @@
+@import "../../sass/containers"
+@import "../../sass/mixins"
+
+.userPage
+  //background-color: #0D1117
+  padding-top: 64px
+  color: #fff
+
+  &__container
+    display: flex
+    flex-direction: column
+    gap: 80px
+    @include mobile
+      gap: 56px
+
+  &__section
+    display: flex
+    flex-direction: column
+    gap: 32px
+
+  &__cards
+    display: grid
+    grid-template-columns: repeat(4, 1fr)
+    gap: 16px
+    @include tablet
+      grid-template-columns: repeat(3, 1fr)
+    @include mobile
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr))
+
+  &__card
+    border: 1px solid rgba(#fff, 0.3)
+    border-radius: 16px
+    padding: 16px
+    display: flex
+    flex-direction: column
+    gap: 32px
+    @include mobile
+      gap: 24px
+
+    &-top
+      display: flex
+      gap: 16px
+      justify-content: space-between
+      flex-wrap: wrap
+
+    &-close
+      width: 26px
+
+    &-sender
+      font-size: 14px
+      line-height: 1
+      background-color: #A6B2CE
+      color: #0E0E0E
+      padding: 8px 12px
+      border-radius: 10px
+      width: fit-content
+
+    &-title
+      font-size: 20px
+      text-wrap: balance
+      @include mobile
+        font-size: 18px
+
+    &-data
+      display: flex
+      flex-direction: column
+      gap: 16px
+    &-data-item
+      display: flex
+      justify-content: space-between
+      gap: 8px
+      border-bottom: 1px solid rgba(#fff, 0.3)
+      font-size: 20px
+      padding-bottom: 12px
+      span
+        font-size: 16px
+        color: rgba(#fff, 0.8)
+      @include mobile
+        font-size: 16px
+        padding-bottom: 8px
+        span
+          font-size: 14px
+
+    &-buttons
+      display: grid
+      grid-template-columns: repeat(2, 1fr)
+      gap: 12px
+      .button:nth-child(3)
+        grid-column: 1 / -1
+

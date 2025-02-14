@@ -1,0 +1,44 @@
+@import "../../sass/containers"
+@import "../../sass/mixins"
+
+.button-create
+  display: flex
+  align-items: center
+  gap: 16px
+  justify-content: center
+  border: 2px solid rgba(#fff, 0.6)
+  border-radius: 16px
+  padding: 32px
+  width: 100%
+  max-width: 340px
+  font-size: 28px
+  font-weight: 500
+  transition: 0.1s ease-in
+  line-height: 1
+  &:hover
+    border-color: #55575C
+    background-color: #55575C
+  @include mobile
+    width: 100%
+    font-size: 20px
+    padding: 16px 32px
+
+  &__icon
+    width: 26px
+
+.form-popup
+  display: flex
+  flex-direction: column
+  gap: 32px
+
+.dates
+  display: flex
+  gap: 32px 8px
+  @media (max-width: 480px)
+    flex-wrap: wrap
+
+  &__item
+    display: flex
+    flex-direction: column
+    gap: 4px
+    width: 100%

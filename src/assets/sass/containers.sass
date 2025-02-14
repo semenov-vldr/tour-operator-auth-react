@@ -1,0 +1,21 @@
+@import "vars.sass"
+
+.container
+  max-width: 1400px
+  min-width: 280px
+  padding: 0 140px
+  margin: 0 auto
+  box-sizing: content-box
+  @media (max-width: $width-tablet)
+    padding: 0 50px
+  @media (max-width: $width-mobile)
+    padding: 0 16px
+
+
+@mixin tablet ()
+  @media (max-width: $width-tablet)
+    @content
+
+@mixin mobile ()
+  @media (max-width: $width-mobile)
+    @content

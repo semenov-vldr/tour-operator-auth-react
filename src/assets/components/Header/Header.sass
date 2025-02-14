@@ -1,0 +1,55 @@
+@import "../../sass/containers"
+
+.header
+  position: sticky
+  top: 0
+  z-index: 1
+  background-color: #161B22
+  padding: 14px 0
+  color: #fff
+  @include mobile
+    padding: 12px 0
+
+  &__container
+    display: flex
+    gap: 32px
+    align-items: center
+    justify-content: space-between
+    @include mobile
+      gap: 16px
+
+
+  .header__user
+    display: flex
+    gap: 8px
+    align-items: center
+    margin-left: auto
+
+  .header__icon
+    width: auto
+    height: 32px
+    @media (max-width: 480px)
+      height: 26px
+
+
+
+  .header__user-email
+    @media (max-width: 400px)
+      font-size: 14px
+      max-width: 160px
+      overflow-x: auto
+
+
+
+  .header__button
+    font-size: 14px
+    background-color: #21262D
+    padding: 6px 12px
+    border: 1px solid #f0f6fc10
+    border-radius: 6px
+    transition: 0.3s ease-in
+    @media (max-width: 480px)
+      font-size: 12px
+
+
+
