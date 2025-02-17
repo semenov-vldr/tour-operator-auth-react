@@ -174,7 +174,6 @@ const ButtonCreate = () => {
     number_of_people: "",
     date_start: "",
     date_end: "",
-    number_of_days: 0,
     food: "",                   // Питание
     type_of_accommodation: "",  // Тип проживания
     budget: "",
@@ -187,6 +186,8 @@ const ButtonCreate = () => {
 
   const handleChange = (e) => {
     const { name, value } = e.target;
+
+
     setOptionTour((prevUser) => ({ ...prevUser, [name]: value }));
   };
 

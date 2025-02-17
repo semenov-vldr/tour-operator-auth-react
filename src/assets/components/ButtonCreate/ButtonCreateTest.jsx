@@ -21,14 +21,11 @@ const ButtonCreateTest = () => {
   // Используем useEffect и onAuthStateChanged для отслеживания состояния аутентификации и получения userId при входе пользователя в систему
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setUserId(user.uid);
-      } else {
-        setUserId(null);
-      }
+      setUserId(user ? user.uid : null);
     });
-    return () => unsubscribe(); // Отписка при размонтировании компонента
-  }, [auth]);
+
+    return () => unsubscribe();
+  }, [auth, setUserId]);
 
 
 
@@ -40,25 +37,35 @@ const ButtonCreateTest = () => {
     number_of_people: "",
     date_start: "",
     date_end: "",
-    number_of_days: 0,
     food: "",                   // Питание
     type_of_accommodation: "",  // Тип проживания
     budget: "",
     comment: "",
-    status: false,              // Одобрена/Не одобрена заявка админом
+    status: "",              // Одобрена/Не одобрена заявка админом
   };
 
 
   const [optionTour, setOptionTour] = useState(tourConfig);
 
+  const reverseDate = (date) => {
+    if (!date) return "";
+    const parts = date.split('-');
+    if (parts.length !== 3) return "Ошибка даты";
+    return parts.reverse().join('-');
+  };
+
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setOptionTour((prevUser) => ({ ...prevUser, [name]: value }));
+    let processedValue = value;
+    if (name === 'date_start' || name === 'date_end') {
+      processedValue = reverseDate(value);
+    }
+    setOptionTour((prevUser) => ({ ...prevUser, [name]: processedValue }));
   };
 
   const TourFormSubmit = async (e) => {
     e.preventDefault();
-
     if (!userId) {
       alert('Вы не авторизованы.');
       return;
@@ -76,7 +83,6 @@ const ButtonCreateTest = () => {
       // Обновляем данные в Firebase
       const updates = {};
       updates[`/users/${userId}/tours/${newTourKey}`] = tourData;
-
       await update(ref(db), updates);
 
       console.log('Данные тура успешно отправлены в Firebase');
@@ -87,6 +93,7 @@ const ButtonCreateTest = () => {
       alert('Произошла ошибка при отправке заявки.');
     }
   };
+
 
   return (
   <>
