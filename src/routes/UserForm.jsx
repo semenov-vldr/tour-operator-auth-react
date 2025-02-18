@@ -1,11 +1,11 @@
 import { Box, Button, Container, TextField, Typography } from "@mui/material";
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import InputMask from 'react-input-mask'
+import InputMask from 'react-input-mask';
 
-import { onAuthStateChanged } from 'firebase/auth';
-import { ref, push, update } from "firebase/database";
-import { db, auth } from "../firebase";
+import { ref, update } from "firebase/database";
+import { db } from "../firebase";
+import useAuth from "../assets/hooks/useAuth.js";
 
 import { getSession } from "../session";
 import Header from "../assets/components/Header/Header";
@@ -14,26 +14,14 @@ import Header from "../assets/components/Header/Header";
 const UserForm = () => {
   const ADMIN_EMAIL = "admin@mail.ru";
 
+  const userId = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
-  const [userId, setUserId] = useState(null);
 
   useEffect(() => {
     let session = getSession();
     setEmail(session.email);
   }, [navigate]);
-
-
-  useEffect(() => {
-    const unsubscribe = onAuthStateChanged(auth, (user) => {
-      if (user) {
-        setUserId(user.uid);
-      } else {
-        setUserId(null);
-      }
-    });
-    return () => unsubscribe(); // Отписка при размонтировании компонента
-  }, [auth]);
 
 
   const userConfig = {

@@ -9,6 +9,8 @@ import Header  from "../assets/components/Header/Header"
 
 
 export default function Register() {
+  const ADMIN_EMAIL = "admin@mail.ru";
+
   const navigate = useNavigate();
 
   const [error, setError] = useState("");
@@ -35,7 +37,12 @@ export default function Register() {
       let registerResponse = await createUser(email, password);
       const user = registerResponse.user;
       startSession(user);
-      navigate("/user-form");
+
+      if (email === ADMIN_EMAIL) {
+        navigate("/admin");
+      } else {
+        navigate("/user-form");
+      }
     }
     catch (error) {
       console.error("Ошибка регистрации:", error.message);

@@ -1,32 +1,17 @@
-import {useState} from "react";
 import { Modal, Box, Typography } from '@mui/material';
 import "./ModalTourDesc.sass"
 
 
-const ModalTourDesc = ({open, handleCloseModal}) => {
-
-  const style = {
-    position: 'absolute',
-    top: '50%',
-    left: '50%',
-    transform: 'translate(-50%, -50%)',
-    maxWidth: 600,
-    width: '100%',
-    bgcolor: 'background.paper',
-    border: '2px solid #000',
-    boxShadow: 24,
-    p: 4,
-  };
-
+const ModalTourDesc = ({tour, userData, isOpen, onClose}) => {
 
   return (
     <Modal
-      open={open}
-      onClose={handleCloseModal}
+      open={isOpen}
+      onClose={onClose}
     >
 
-      <Box sx={style}>
-        <Typography id="modal-modal-title" variant="h6" component="h2">
+      <Box className="modal">
+        <Typography variant="h6" component="h2">
           Данные по туру:
         </Typography>
 
@@ -34,44 +19,49 @@ const ModalTourDesc = ({open, handleCloseModal}) => {
           <ul className="modal__list">
             <li className="modal__item">
               <span>Компания:</span>
-              <span>Ответ</span>
+              <span>{userData.legal_name}</span>
             </li>
             <li className="modal__item">
               <span>Дата заявки:</span>
-              <span>Ответ</span>
+              <span>{tour.date_of_application || "нет данных"}</span>
             </li>
             <li className="modal__item">
               <span>Город поездки:</span>
-              <span>Ответ</span>
+              <span>{tour.name}</span>
             </li>
             <li className="modal__item">
               <span>Дата начала:</span>
-              <span>Ответ</span>
+              <span>{tour.date_start}</span>
             </li>
             <li className="modal__item">
               <span>Дата окончания:</span>
-              <span>Ответ</span>
+              <span>{tour.date_end}</span>
             </li>
             <li className="modal__item">
               <span>Количество человек:</span>
-              <span>Ответ</span>
+              <span>{tour.number_of_people}</span>
             </li>
             <li className="modal__item">
               <span>Питание:</span>
-              <span>Ответ</span>
+              <span>{tour.food}</span>
             </li>
             <li className="modal__item">
               <span>Проживание:</span>
-              <span>Ответ</span>
+              <span>{tour.type_of_accommodation}</span>
             </li>
             <li className="modal__item">
               <span>Бюджет на чел:</span>
-              <span>Ответ</span>
+              <span>{tour.budget}</span>
             </li>
-            <li className="modal__item">
-              <span>Комментарий:</span>
-              <span>Ответ</span>
-            </li>
+            {
+              tour.comment && (
+                <li className="modal__item">
+                  <span>Комментарий:</span>
+                  <span>{tour.comment || ""}</span>
+                </li>
+              )
+            }
+
           </ul>
         </div>
 

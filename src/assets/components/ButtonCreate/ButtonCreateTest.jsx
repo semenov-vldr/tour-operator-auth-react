@@ -42,6 +42,7 @@ const ButtonCreateTest = () => {
     budget: "",
     comment: "",
     status: "",              // Одобрена/Не одобрена заявка админом
+    date_of_application: new Date().toJSON().slice(0, 10),
   };
 
 

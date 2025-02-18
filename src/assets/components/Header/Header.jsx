@@ -40,7 +40,7 @@ const Header = ( { pageUser = false } ) => {
       <div className="header__container container">
         <img className="header__logo header__icon" src={isMobile ? logo : logoText} alt="logo" />
 
-        { pageUser && (
+        { pageUser? (
           <>
             <div className="header__user">
               <span className="header__user-email">{email}</span>
@@ -48,7 +48,10 @@ const Header = ( { pageUser = false } ) => {
             </div>
             <button className="header__button" onClick={onLogout}>Выйти</button>
           </>
-          )}
+          ): (
+            <span>Admin</span>
+          )
+        }
 
 
       </div>
