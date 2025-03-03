@@ -41,7 +41,7 @@ const ButtonCreateTest = () => {
     type_of_accommodation: "",  // Тип проживания
     budget: "",
     comment: "",
-    status: "",              // Одобрена/Не одобрена заявка админом
+    status: "",              // Одобрена/Не одобрена заявка админом - по умолчанию сделать "new"
     date_of_application: new Date().toJSON().slice(0, 10),
   };
 
@@ -232,7 +232,6 @@ const ButtonCreateTest = () => {
             rows={3}
             onChange={handleChange}
           />
-
 
         </Box>
       </DialogContent>

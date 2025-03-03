@@ -10,10 +10,6 @@ import UserForm from './routes/UserForm';
 import User from "./routes/User";
 import Admin from "./routes/Admin";
 
-// import Storage from './routes/storage';
-// import Storage_v2 from './routes/storage-v2';
-
-
 
 const router = createBrowserRouter([
   {

@@ -1,19 +1,29 @@
 import {Alert, Box, Button, Container, Link, TextField, Typography} from "@mui/material";
-import {useNavigate} from "react-router-dom";
-import {useState} from "react";
-
+import {useNavigate } from "react-router-dom";
+import {useEffect, useState} from "react";
 import {signInUser} from "../firebase";
 import {startSession} from "../session";
+import useAuthentication from "../assets/hooks/useAuthentication.js";
+import Header from "../assets/components/Header/Header";
 
-import Header from "../assets/components/Header/Header"
+
 
 export default function Login() {
 
   const navigate = useNavigate();
+  const { user, loading } = useAuthentication();
 
   const [error, setError] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+
+
+  useEffect(() => {
+    if (!loading && user) {
+      navigate('/user', { replace: true });
+    }
+  }, [user, loading, navigate]);
+
 
   const onSubmit = async (event) => {
     event.preventDefault();
@@ -24,20 +34,20 @@ export default function Login() {
       return;
     }
 
-    // clear the errors
     setError("");
-
     console.log("Logging in...");
 
     try {
       let loginResponse = await signInUser(email, password);
       startSession(loginResponse.user);
-      navigate("/user");
+      //navigate("/user");
+      navigate('/user', { replace: true });
     } catch (error) {
       console.error(error.message);
       setError(error.message);
     }
-  }
+  };
+
 
   return (
     <>
@@ -76,9 +86,6 @@ export default function Login() {
           </Box>
         </Box>
       </Container>
-
-
     </>
-
   )
 }

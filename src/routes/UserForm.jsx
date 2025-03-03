@@ -8,6 +8,7 @@ import { db } from "../firebase";
 import useAuth from "../assets/hooks/useAuth.js";
 
 import { getSession } from "../session";
+import useAuthentication from "../assets/hooks/useAuthentication.js";
 import Header from "../assets/components/Header/Header";
 
 
@@ -17,11 +18,12 @@ const UserForm = () => {
   const userId = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
+  //const { userAuth, loading } = useAuthentication();
 
   useEffect(() => {
     let session = getSession();
     setEmail(session.email);
-  }, [navigate]);
+  }, [ navigate]);
 
 
   const userConfig = {

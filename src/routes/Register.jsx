@@ -5,7 +5,7 @@ import { useState } from "react";
 import { createUser } from "../firebase";
 import { startSession } from "../session";
 
-import Header  from "../assets/components/Header/Header"
+import Header  from "../assets/components/Header/Header";
 
 
 export default function Register() {
