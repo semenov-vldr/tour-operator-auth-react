@@ -1,170 +1,33 @@
 import * as React from 'react';
-import {useState} from "react";
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import MenuItem from '@mui/material/MenuItem';
-import Box from '@mui/material/Box';
-import Dialog from '@mui/material/Dialog';
-import DialogActions from '@mui/material/DialogActions';
-import DialogContent from '@mui/material/DialogContent';
-import DialogContentText from '@mui/material/DialogContentText';
-import DialogTitle from '@mui/material/DialogTitle';
-import InputLabel from '@mui/material/InputLabel';
+import { useState, useEffect } from "react";
+import { Button, TextField, MenuItem, Box, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, InputLabel } from '@mui/material';
 
-import { ref, push, } from "firebase/database";
-import { db } from "../../../firebase.js";
+import { onAuthStateChanged } from 'firebase/auth';
+import { ref, push, update } from "firebase/database";
+import reverseDate from "../../hooks/reverseDate.js";
 
-import "./ButtonCreate.sass"
-import AddIcon from "../../icons/add.svg"
+import { db, auth } from "../../../firebase.js";
+import "./ButtonCreate.sass";
+import AddIcon from "../../icons/add.svg";
 
-
-const namesOfExcursions = [
-  {
-    value: "Санкт-Петербург",
-    label: "Санкт-Петербург"
-  },
-  {
-    value: "Москва",
-    label: "Москва"
-  },
-  {
-    value: "Казань",
-    label: "Казань"
-  },
-  {
-    value: "Волгоград",
-    label: "Волгоград"
-  },
-  {
-    value: "Карелия",
-    label: "Карелия"
-  },
-  {
-    value: "Сочи",
-    label: "КавМинВоды"
-  },
-  {
-    value: "Калининград",
-    label: "Калининград"
-  },
-  {
-    value: "Тула",
-    label: "Тула"
-  },
-  {
-    value: "Золотое Кольцо России",
-    label: "Золотое Кольцо России"
-  },
-  {
-    value: "Мурманск",
-    label: "Мурманск"
-  },
-  {
-    value: "Великий Новгород",
-    label: "Великий Новгород"
-  },
-  {
-    value: "Нижний Новгород",
-    label: "Нижний Новгород"
-  },
-  {
-    value: "Беларусь",
-    label: "Беларусь"
-  },
-
-];
-
-
-const numberOfPeople = [
-  {
-    value: "10-15",
-    label: "от 10 до 15 чел"
-  },
-  {
-    value: "15-20",
-    label: "от 15 до 20 чел"
-  },
-  {
-    value: "20-30",
-    label: "от 20 до 30 чел"
-  },
-  {
-    value: "30-40",
-    label: "от 30 до 40 чел"
-  },
-  {
-    value: "40-50",
-    label: "от 40 до 50 чел"
-  },
-  {
-    value: "50 и более",
-    label: "50 и более"
-  },
-];
-
-
-const budget = [
-  {
-    value: "до 10 000 руб./чел.",
-    label: "до 10 000 руб./чел."
-  },
-  {
-    value: "от 10 000 - 15 000 руб./чел.",
-    label: "от 10 000 - 15 000 руб./чел."
-  },
-  {
-    value: "от 15 000 - 20 000 руб./чел.",
-    label: "от 15 000 - 20 000 руб./чел."
-  },
-  {
-    value: "от 20 000 - 30 000 руб./чел.",
-    label: "от 20 000 - 30 000 руб./чел."
-  }
-];
-
-const food = [
-  {
-    value: "BB - завтраки",
-    label: "BB - завтраки"
-  },
-  {
-    value: "HB - завтрак и обед/ужин",
-    label: "HB - завтрак и обед/ужин"
-  },
-  {
-    value: "FB - завтрак, обед и ужин",
-    label: "FB - завтрак, обед и ужин"
-  },
-];
-
-const typeOfAccommodation = [
-  {
-    value: "Хостел",
-    label: "Хостел"
-  },
-  {
-    value: "Отель 2*",
-    label: "Отель 2*"
-  },
-  {
-    value: "Отель 3*",
-    label: "Отель 3*"
-  },
-  {
-    value: "Отель 4*",
-    label: "Отель 4*"
-  },
-  {
-    value: "Отель 5*",
-    label: "Отель 5*"
-  },
-
-];
+import { namesOfExcursions, numberOfPeople, budget, food, typeOfAccommodation } from "./answer_options.js";
 
 
 
-const ButtonCreate = () => {
+const ButtonCreate = ({ fetchNewTours }) => {
   const [open, setOpen] = useState(false);
+  const [userId, setUserId] = useState(null);
+
+
+  // Используем useEffect и onAuthStateChanged для отслеживания состояния аутентификации и получения userId при входе пользователя в систему
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (user) => {
+      setUserId(user ? user.uid : null);
+    });
+
+    return () => unsubscribe();
+  }, [auth, setUserId]);
+
 
   const handleClickOpen = () => setOpen(true);
   const handleClose = () => setOpen(false);
@@ -178,37 +41,59 @@ const ButtonCreate = () => {
     type_of_accommodation: "",  // Тип проживания
     budget: "",
     comment: "",
-    status: false,              // Одобрена/Не одобрена заявка админом
+    status: "new",
+    date_creation: reverseDate(new Date().toJSON().slice(0, 10)),
   };
 
 
   const [optionTour, setOptionTour] = useState(tourConfig);
 
+
   const handleChange = (e) => {
     const { name, value } = e.target;
-
-
-    setOptionTour((prevUser) => ({ ...prevUser, [name]: value }));
+    let processedValue = value;
+    if (name === 'date_start' || name === 'date_end') {
+      processedValue = reverseDate(value);
+    }
+    setOptionTour((prevUser) => ({ ...prevUser, [name]: processedValue }));
   };
 
   const TourFormSubmit = async (e) => {
     e.preventDefault();
-
-    const usersRef = ref(db, "users/tours");
-
-    const user = { ...optionTour };
+    if (!userId) {
+      alert('Вы не авторизованы.');
+      return;
+    }
 
     try {
-      const newElementRef = await push(usersRef, user);
-      console.log(newElementRef.key);
-      console.log("Данные тура успешно отправлены в Firebase");
-      setOptionTour(tourConfig);
+      // Создаем новый ключ для тура
+      const newTourKey = push(ref(db, `users/${userId}/tours`)).key;
 
+      // Формируем объект данных тура
+      const tourData = {
+        ...optionTour,
+        tourId: newTourKey,
+      };
+
+      // Удаляем незаполненные поля в БД
+      Object.keys(tourData).forEach(key => tourData[key] === "" ? delete tourData[key] : {});
+
+      // Обновляем данные в Firebase
+      const updates = {};
+      updates[`/users/${userId}/tours/${newTourKey}`] = tourData;
+      await update(ref(db), updates);
+
+      console.log('Данные тура успешно отправлены в Firebase');
+      setOptionTour(tourConfig);
+      handleClose();
+      // Обновляем список новых туров после создания новой заявки
+      fetchNewTours();
     } catch (error) {
-      console.error("Ошибка отправки данных:", error);
+      console.error('Ошибка отправки данных:', error);
+      alert('Произошла ошибка при отправке заявки.');
     }
-    handleClose();
   };
+
 
   return (
   <>
@@ -346,7 +231,6 @@ const ButtonCreate = () => {
             rows={3}
             onChange={handleChange}
           />
-
 
         </Box>
       </DialogContent>

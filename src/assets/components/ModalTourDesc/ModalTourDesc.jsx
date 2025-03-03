@@ -1,5 +1,5 @@
 import { Modal, Box, Typography } from '@mui/material';
-import "./ModalTourDesc.sass"
+import "./ModalTourDesc.sass";
 
 
 const ModalTourDesc = ({tour, userData, isOpen, onClose}) => {
@@ -23,7 +23,7 @@ const ModalTourDesc = ({tour, userData, isOpen, onClose}) => {
             </li>
             <li className="modal__item">
               <span>Дата заявки:</span>
-              <span>{tour.date_of_application || "нет данных"}</span>
+              <span>{tour.date_creation || "нет данных"}</span>
             </li>
             <li className="modal__item">
               <span>Город поездки:</span>

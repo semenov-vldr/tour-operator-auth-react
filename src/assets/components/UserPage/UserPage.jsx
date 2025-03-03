@@ -1,13 +1,14 @@
 import "./UserPage.sass";
 import { useState, useEffect } from "react";
 
-import ModalTourDesc from "../ModalTourDesc/ModalTourDesc.jsx";
+import ModalTourDesc from "../ModalTourDesc/ModalTourDesc";
 import { ref, get, update, remove } from "firebase/database";
 import { db } from "../../../firebase.js";
 import useAuth from "../../hooks/useAuth.js";
 
-import ButtonCreateTest from "../ButtonCreate/ButtonCreateTest";
-import TourCard from "../TourCard/TourCard.jsx";
+import ButtonCreate from "../ButtonCreate/ButtonCreate";
+import TourCard from "../TourCard/TourCard";
+import AlertDialog from "../AlertDialog/AlertDialog";
 
 
 const UserPage = () => {
@@ -15,7 +16,6 @@ const UserPage = () => {
   const [newTours, setNewTours] = useState([]);
   const [acceptedTours, setAcceptedTours] = useState([]);
   const [rejectedTours, setRejectedTours] = useState([]);
-  const [toursId, setToursId] = useState([]);
   const [userData, setUserData] = useState([]);
   const [loading, setLoading] = useState(true);
 
@@ -37,31 +37,17 @@ const UserPage = () => {
   };
 
 
-
-// --- Добавление карточек тура из БД ---
-// const fetchTours = async () => {
-//   const dbToursRef = ref(db, `users/${userId}/tours`);
-//   const snapshotTours = await get(dbToursRef);
-//   if (snapshotTours.exists()) {
-//     setNewTours(Object.values(snapshotTours.val()));
-//     setToursId(Object.keys(snapshotTours.val()));
-//   }
-// };
-
-
   // Рендер новых заявок
   const fetchNewTours = async () => {
     const dbToursRef = ref(db, `users/${userId}/tours`);
     const snapshotTours = await get(dbToursRef);
     if (snapshotTours.exists()) {
       const tours = Object.entries(snapshotTours.val())
-        .filter(([, tour]) => tour.status === "")
-        .map(([tourId, tourData]) => ({
-          id: tourId,
+        .filter(([, tour]) => tour.status === "new")
+        .map(([, tourData]) => ({
           ...tourData
         }));
       setNewTours(tours);
-      setToursId(Object.keys(snapshotTours.val()));
     } else {
       setNewTours([]);
     }
@@ -74,12 +60,10 @@ const UserPage = () => {
     if (snapshotTours.exists()) {
       const tours = Object.entries(snapshotTours.val())
         .filter(([, tour]) => tour.status === true)
-        .map(([tourId, tourData]) => ({
-          id: tourId,
+        .map(([, tourData]) => ({
           ...tourData
         }));
       setAcceptedTours(tours);
-      setToursId(Object.keys(snapshotTours.val()));
     } else {
       setAcceptedTours([]);
     }
@@ -93,12 +77,10 @@ const UserPage = () => {
     if (snapshotTours.exists()) {
       const tours = Object.entries(snapshotTours.val())
         .filter(([, tour]) => tour.status === false)
-        .map(([tourId, tourData]) => ({
-          id: tourId,
+        .map(([, tourData]) => ({
           ...tourData
         }));
       setRejectedTours(tours);
-      setToursId(Object.keys(snapshotTours.val()));
     } else {
       setRejectedTours([]);
     }
@@ -106,22 +88,13 @@ const UserPage = () => {
 
 
 // Получение данных для кнопки "Подробнее"
-const fetchUserData = async () => {
-  const dbUserDataRef = ref(db, `users/${userId}`);
-  const snapshotUserData = await get(dbUserDataRef);
-  if (snapshotUserData.exists()) {
-    setUserData(snapshotUserData.val());
-  }
-};
-
-
-// useEffect(() => {
-//  if (userId) {
-//    fetchTours();
-//    fetchUserData();
-//    setLoading(false);
-//  }
-// }, [userId, db]);
+  const fetchUserData = async () => {
+    const dbUserDataRef = ref(db, `users/${userId}`);
+    const snapshotUserData = await get(dbUserDataRef);
+    if (snapshotUserData.exists()) {
+      setUserData(snapshotUserData.val());
+    }
+  };
 
 
   useEffect(() => {
@@ -134,52 +107,45 @@ const fetchUserData = async () => {
       ]).then(() => setLoading(false));
     }
 
-    console.log(acceptedTours)
   }, [userId, db]);
 // ------------------------------
 
 
 // Установка статуса заявки в БД (отклонено/принято)
-async function updateTourStatus (tourId, status) {
-  const tourRef = ref(db, `users/${userId}/tours/${tourId}`);
-  try {
-    await update(tourRef, { status: status });
+  async function updateTourStatus (tourId, status) {
+    const tourRef = ref(db, `users/${userId}/tours/${tourId}`);
+    try {
+      await update(tourRef, { status: status });
 
-    switch (status) {
-      case true:
-        setNewTours(newTours.filter(tour => tour.id !== tourId));
-        setAcceptedTours([...acceptedTours, newTours.find(tour => tour.id === tourId)]);
-        break;
+      switch (status) {
+        case true:
+          setNewTours(newTours.filter(tour => tour.tourId !== tourId));
+          setAcceptedTours([...acceptedTours, newTours.find(tour => tour.tourId === tourId)]);
+          break;
 
-      case false:
-        setNewTours(newTours.filter(tour => tour.id !== tourId));
-        setRejectedTours([...rejectedTours, newTours.find(tour => tour.id === tourId)]);
-        break;
-      default:
-        break;
+        case false:
+          setNewTours(newTours.filter(tour => tour.tourId !== tourId));
+          setRejectedTours([...rejectedTours, newTours.find(tour => tour.tourId === tourId)]);
+          break;
+        default:
+          break;
+      }
+    } catch (error) {
+      console.error('Ошибка при обновлении статуса тура:', error);
     }
-  } catch (error) {
-    console.error('Ошибка при обновлении статуса тура:', error);
-  }
-};
+  };
 
 
 
 // Обработчики для кнопок "принять"/"отклонить"
-const getTourId = (event) => event.target.closest(".userPage__card").dataset.id;
-
-  const handleAccept = (event) => {
-    const tourId = getTourId(event);
-    //updateTourStatus(tourId,true);
+  const handleAccept = (tourId) => {
     const confirmation = confirm("Вы действительно хотите принять заявку?");
     if (confirmation) {
       updateTourStatus(tourId,true);
     }
   };
 
-  const handleReject = (event) => {
-    const tourId = getTourId(event);
-    //updateTourStatus(tourId,false);
+  const handleReject = (tourId) => {
     const confirmation = confirm("Вы действительно хотите отклонить заявку?");
     if (confirmation) {
       updateTourStatus(tourId,false);
@@ -187,19 +153,16 @@ const getTourId = (event) => event.target.closest(".userPage__card").dataset.id;
   };
 
 
-  const deleteTour = async (event) => {
-    const confirmation = confirm("Вы действительно хотите принять заявку?");
+  const deleteTour = async (tourId) => {
+    const confirmation = confirm(`Вы действительно хотите принять заявку? TourID: ${tourId}`);
     if (confirmation) {
-      const tourId = getTourId(event);
       const tourRef = ref(db, `users/${userId}/tours/${tourId}`);
       try {
         await remove(tourRef);
 
-        setNewTours(newTours.filter(tour => tour.id !== tourId));
-        setAcceptedTours(acceptedTours.filter(tour => tour.id !== tourId));
-        setRejectedTours(rejectedTours.filter(tour => tour.id !== tourId));
-
-        // fetchTours();
+        setNewTours(newTours.filter(tour => tour.tourId !== tourId));
+        setAcceptedTours(acceptedTours.filter(tour => tour.tourId !== tourId));
+        setRejectedTours(rejectedTours.filter(tour => tour.tourId !== tourId));
       } catch (error) {
         console.error("Ошибка при удалении тура: ", error);
       }
@@ -212,7 +175,7 @@ const getTourId = (event) => event.target.closest(".userPage__card").dataset.id;
     <main className="main userPage">
       <div className="userPage__container container">
 
-        <ButtonCreateTest />
+        <ButtonCreate fetchNewTours={fetchNewTours} />
 
         {
           loading ? (
@@ -225,21 +188,20 @@ const getTourId = (event) => event.target.closest(".userPage__card").dataset.id;
                 <div className="userPage__cards">
 
                   {
-                      newTours.length > 0 ? (
-                        newTours.map((newTour, index) => (
-                          <TourCard
-                            key={index}
-                            tour={newTour}
-                            tourId={toursId[index]}
-                            userData={userData}
-                            deleteTour={deleteTour}
-                            handleReject={handleReject}
-                            handleAccept={handleAccept}
-                            onDetailsClick={() => handleOpenModal(newTour)}
-                            showButtons={true}
-                          />
-                        ))
-                      ) : <div>Новых заявок нет</div>
+                    newTours.length > 0 ? (
+                      newTours.map(newTour => (
+                        <TourCard
+                          key={newTour.tourId}
+                          tour={newTour}
+                          userData={userData}
+                          deleteTour={() => deleteTour(newTour.tourId)}
+                          handleReject={() => handleReject(newTour.tourId)}
+                          handleAccept={() =>handleAccept(newTour.tourId)}
+                          onDetailsClick={() => handleOpenModal(newTour)}
+                          showButtons={true}
+                        />
+                      ))
+                    ) : <div>Новых заявок нет</div>
                   }
                 </div>
 
@@ -250,21 +212,20 @@ const getTourId = (event) => event.target.closest(".userPage__card").dataset.id;
 
                 <div className="userPage__cards">
                   {
-                      acceptedTours.length > 0 && (
-                      acceptedTours.map((acceptedTour, index) => (
-                          <TourCard
-                            key={index}
-                            tour={acceptedTour}
-                            tourId={toursId[index]}
-                            userData={userData}
-                            deleteTour={deleteTour}
-                            handleReject={handleReject}
-                            handleAccept={handleAccept}
-                            onDetailsClick={() => handleOpenModal(acceptedTour)}
-                            showButtons={false}
-                          />
-                        ))
-                      )
+                    acceptedTours.length > 0 && (
+                      acceptedTours.map(acceptedTour => (
+                        <TourCard
+                          key={acceptedTour.tourId}
+                          tour={acceptedTour}
+                          userData={userData}
+                          deleteTour={() => deleteTour(acceptedTour.tourId)}
+                          handleReject={() => handleReject(acceptedTour.tourId)}
+                          handleAccept={() =>handleAccept(acceptedTour.tourId)}
+                          onDetailsClick={() => handleOpenModal(acceptedTour)}
+                          showButtons={false}
+                        />
+                      ))
+                    ) || <span>0</span>
                   }
                 </div>
               </section>
@@ -274,21 +235,20 @@ const getTourId = (event) => event.target.closest(".userPage__card").dataset.id;
 
                 <div className="userPage__cards">
                   {
-                      rejectedTours.length > 0 && (
-                      rejectedTours.map((rejectedTour, index) => (
-                          <TourCard
-                            key={index}
-                            tour={rejectedTour}
-                            tourId={toursId[index]}
-                            userData={userData}
-                            deleteTour={deleteTour}
-                            handleReject={handleReject}
-                            handleAccept={handleAccept}
-                            onDetailsClick={() => handleOpenModal(rejectedTour)}
-                            showButtons={false}
-                          />
-                        ))
-                      )
+                    rejectedTours.length > 0 && (
+                      rejectedTours.map(rejectedTour => (
+                        <TourCard
+                          key={rejectedTour.tourId}
+                          tour={rejectedTour}
+                          userData={userData}
+                          deleteTour={() => deleteTour(rejectedTour.tourId)}
+                          handleReject={() => handleReject(rejectedTour.tourId)}
+                          handleAccept={() =>handleAccept(rejectedTour.tourId)}
+                          onDetailsClick={() => handleOpenModal(rejectedTour)}
+                          showButtons={false}
+                        />
+                      ))
+                    ) || <span>0</span>
                   }
                 </div>
               </section>
@@ -297,6 +257,7 @@ const getTourId = (event) => event.target.closest(".userPage__card").dataset.id;
         }
 
         <ModalTourDesc userData={userData} tour={selectedTour} isOpen={isModalOpen} onClose={handleCloseModal} />
+        <AlertDialog />
 
       </div>
     </main>

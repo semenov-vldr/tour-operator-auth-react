@@ -1,9 +1,9 @@
 import CloseIcon from "../../icons/close.svg";
 
 
-const TourCard = ({ tour, tourId, userData, deleteTour, handleReject, handleAccept, onDetailsClick, showButtons }) => {
+const TourCard = ({ tour, userData, deleteTour, handleReject, handleAccept, onDetailsClick, showButtons }) => {
   return (
-    <article data-id={tourId} className="userPage__card">
+    <article className="userPage__card">
       <div className="userPage__card-top">
         <span className="userPage__card-sender">{userData.legal_name}</span>
         <button onClick={deleteTour} className="userPage__card-close">
