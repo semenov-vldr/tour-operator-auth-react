@@ -25,7 +25,7 @@
     @include tablet
       grid-template-columns: repeat(3, 1fr)
     @include mobile
-      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr))
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr))
 
   &__card
     border: 1px solid rgba(#fff, 0.3)
@@ -36,6 +36,8 @@
     gap: 32px
     @include mobile
       gap: 24px
+    &:hover
+      outline: 1px solid rgba(#fff, 0.3)
 
     &-top
       display: flex

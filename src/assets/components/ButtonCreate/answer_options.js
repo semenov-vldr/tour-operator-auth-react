@@ -21,6 +21,10 @@ export const namesOfExcursions = [
   },
   {
     value: "Сочи",
+    label: "Сочи"
+  },
+  {
+    value: "КавМинВоды",
     label: "КавМинВоды"
   },
   {

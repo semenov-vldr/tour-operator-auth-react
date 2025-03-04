@@ -24,17 +24,32 @@ const UserPage = () => {
   // Определяем по какой карточки тура кликнули кнопку "Подробнее" для вызова модального окна
   const [selectedTour, setSelectedTour] = useState({});
 
+  // Окно поп-ап подтверждения действия с карточкой тура
+  const [isOpenAlertDialog, setIsOpenAlertDialog] = useState(false);
+  // Текст для диалогового окна после действия с карточкой тура
+  const [textAlertDialog, setTextAlertDialog] = useState("");
+  // Состояние для хранения информации о действии
+  const [actionDataAlertDialog, setActionDataAlertDialog] = useState({
+    tourId: null,
+    actionType: null,
+  });
+
   // Функция для открытия модального окна
-  const handleOpenModal = (tour) => {
+  const handleOpenModalDetails = (tour) => {
     setIsModalOpen(true);
     setSelectedTour(tour);
   };
 
   // Функция для закрытия модального окна
-  const handleCloseModal = () => {
+  const handleCloseModalDetails = () => {
     setIsModalOpen(false);
     setSelectedTour({});
   };
+
+
+  // Открытие/закрытие диалогового окна (окно подтверждения действия)
+  const handleOpenAlertDialog = () => setIsOpenAlertDialog(true);
+  const handleCloseAlertDialog = () => setIsOpenAlertDialog(false);
 
 
   // Рендер новых заявок
@@ -136,26 +151,62 @@ const UserPage = () => {
   };
 
 
+  // Подтверждение действия в диалоговом окне (принять/отклонить)
+  const handleConfirmAction = () => {
+    const { tourId, actionType } = actionDataAlertDialog;
 
-// Обработчики для кнопок "принять"/"отклонить"
-  const handleAccept = (tourId) => {
-    const confirmation = confirm("Вы действительно хотите принять заявку?");
-    if (confirmation) {
-      updateTourStatus(tourId,true);
+    if (!tourId || !actionType) {
+      console.warn("Недостаточно информации для выполнения действия.");
+      handleCloseAlertDialog();
+      return;
     }
+
+    switch (actionType) {
+      case 'accept':
+        updateTourStatus(tourId, true);
+        break;
+      case 'reject':
+        updateTourStatus(tourId, false);
+        break;
+      case 'delete':
+        deleteTour(tourId);
+        break;
+      default:
+        console.warn("Неизвестный тип действия:", actionType);
+    }
+    handleCloseAlertDialog();
+    setActionDataAlertDialog({ tourId: null, actionType: null }); // Сбрасываем состояние
+  };
+
+// --- Обработчики для кнопок "принять"/"отклонить"/"удалить" ---
+  const handleAccept = (tourId) => {
+    const text = "Вы действительно хотите принять заявку на тур?";
+    handleOpenAlertDialog();
+    setTextAlertDialog(text);
+    setActionDataAlertDialog({ tourId: tourId, actionType: "accept" } );
   };
 
   const handleReject = (tourId) => {
-    const confirmation = confirm("Вы действительно хотите отклонить заявку?");
-    if (confirmation) {
-      updateTourStatus(tourId,false);
-    }
+    const text = "Вы действительно хотите отклонить заявку?";
+    handleOpenAlertDialog();
+    setTextAlertDialog(text);
+    setActionDataAlertDialog({ tourId: tourId, actionType: "reject" } );
   };
 
+  const handleDelete = (tourId) => {
+    const text = "Вы действительно хотите удалить заявку на тур?";
+    handleOpenAlertDialog();
+    setTextAlertDialog(text);
+    setActionDataAlertDialog({ tourId: tourId, actionType: 'delete' });
+  };
+  // -----------
 
-  const deleteTour = async (tourId) => {
-    const confirmation = confirm(`Вы действительно хотите принять заявку? TourID: ${tourId}`);
-    if (confirmation) {
+
+
+  async function deleteTour (tourId) {
+    const text = "Вы действительно хотите принять заявку?";
+    handleOpenAlertDialog();
+    setTextAlertDialog(text);
       const tourRef = ref(db, `users/${userId}/tours/${tourId}`);
       try {
         await remove(tourRef);
@@ -166,9 +217,6 @@ const UserPage = () => {
       } catch (error) {
         console.error("Ошибка при удалении тура: ", error);
       }
-    } else {
-      console.log("Отмена удаления");
-    }
   };
 
   return (
@@ -194,10 +242,10 @@ const UserPage = () => {
                           key={newTour.tourId}
                           tour={newTour}
                           userData={userData}
-                          deleteTour={() => deleteTour(newTour.tourId)}
+                          deleteTour={() => handleDelete(newTour.tourId)}
                           handleReject={() => handleReject(newTour.tourId)}
                           handleAccept={() =>handleAccept(newTour.tourId)}
-                          onDetailsClick={() => handleOpenModal(newTour)}
+                          onDetailsClick={() => handleOpenModalDetails(newTour)}
                           showButtons={true}
                         />
                       ))
@@ -218,10 +266,10 @@ const UserPage = () => {
                           key={acceptedTour.tourId}
                           tour={acceptedTour}
                           userData={userData}
-                          deleteTour={() => deleteTour(acceptedTour.tourId)}
+                          deleteTour={() => handleDelete(acceptedTour.tourId)}
                           handleReject={() => handleReject(acceptedTour.tourId)}
                           handleAccept={() =>handleAccept(acceptedTour.tourId)}
-                          onDetailsClick={() => handleOpenModal(acceptedTour)}
+                          onDetailsClick={() => handleOpenModalDetails(acceptedTour)}
                           showButtons={false}
                         />
                       ))
@@ -241,10 +289,10 @@ const UserPage = () => {
                           key={rejectedTour.tourId}
                           tour={rejectedTour}
                           userData={userData}
-                          deleteTour={() => deleteTour(rejectedTour.tourId)}
+                          deleteTour={() => handleDelete(rejectedTour.tourId)}
                           handleReject={() => handleReject(rejectedTour.tourId)}
                           handleAccept={() =>handleAccept(rejectedTour.tourId)}
-                          onDetailsClick={() => handleOpenModal(rejectedTour)}
+                          onDetailsClick={() => handleOpenModalDetails(rejectedTour)}
                           showButtons={false}
                         />
                       ))
@@ -256,8 +304,13 @@ const UserPage = () => {
           )
         }
 
-        <ModalTourDesc userData={userData} tour={selectedTour} isOpen={isModalOpen} onClose={handleCloseModal} />
-        <AlertDialog />
+        <ModalTourDesc userData={userData} tour={selectedTour} isOpen={isModalOpen} onClose={handleCloseModalDetails} />
+        <AlertDialog
+          isOpen={isOpenAlertDialog}
+          onClose={handleCloseAlertDialog}
+          onConfirm={handleConfirmAction}
+          text={textAlertDialog}
+        />
 
       </div>
     </main>
