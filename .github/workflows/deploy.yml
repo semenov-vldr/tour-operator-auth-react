@@ -1,49 +1,34 @@
-name: Deploy
+name: Deploy React + Vite to GitHub Pages
 
 on:
   push:
     branches:
-      - master
+      - master  # Trigger workflow on push to the master branch
 
 jobs:
-  build:
-    name: Build
-    runs-on: ubuntu-latest
-
-    steps:
-      - name: Checkout repo
-        uses: actions/checkout@v3
-
-      - name: Setup Node
-        uses: actions/setup-node@v3
-
-      - name: Install dependencies
-        uses: bahmutov/npm-install@v1
-
-      - name: Build project
-        run: npm run build
-
-      - name: Upload production-ready build files
-        uses: actions/upload-artifact@v3
-        with:
-          name: production-files
-          path: ./dist
-
   deploy:
     name: Deploy
-    needs: build
     runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
 
     steps:
-      - name: Download artifact
-        uses: actions/download-artifact@v3
+      - name: Checkout repository
+        uses: actions/checkout@v3  # Используйте v3 или более позднюю
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3  # Используйте v3 или более позднюю
         with:
-          name: production-files
-          path: ./dist
+          node-version: '18' # Рекомендуется использовать LTS версию Node.js (например, 18)
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Build
+        run: npm run build  # Выполняем команду сборки, указанную в package.json
 
       - name: Deploy to GitHub Pages
         uses: peaceiris/actions-gh-pages@v3
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: ./dist
+          publish_dir: ./dist # Папка, в которой находится собранный Vite проект (обычно 'dist')
+          force_orphan: true # Это ОЧЕНЬ ВАЖНО для правильной работы
+          publish_branch: gh-pages # Указываем ветку, в которую будет развернут сайт
