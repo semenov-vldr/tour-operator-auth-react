@@ -9,9 +9,10 @@ import useAuth from "../../hooks/useAuth.js";
 import ButtonCreate from "../ButtonCreate/ButtonCreate";
 import TourCard from "../TourCard/TourCard";
 import AlertDialog from "../AlertDialog/AlertDialog";
+import ModalUserData from "../ModalUserData/ModalUserData.jsx";
 
 
-const UserPage = () => {
+const UserPage = ({isUser = true}) => {
   const userId = useAuth();
   const [newTours, setNewTours] = useState([]);
   const [acceptedTours, setAcceptedTours] = useState([]);
@@ -20,9 +21,11 @@ const UserPage = () => {
   const [loading, setLoading] = useState(true);
 
   // состояние для открытия/закрытия модального окна
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isModalTourOpen, setIsModalTourOpen] = useState(false);
   // Определяем по какой карточки тура кликнули кнопку "Подробнее" для вызова модального окна
   const [selectedTour, setSelectedTour] = useState({});
+
+  const [isModalDataCompanyOpen, setIsModalDataCompanyOpen] = useState(false);
 
   // Окно поп-ап подтверждения действия с карточкой тура
   const [isOpenAlertDialog, setIsOpenAlertDialog] = useState(false);
@@ -36,15 +39,19 @@ const UserPage = () => {
 
   // Функция для открытия модального окна
   const handleOpenModalDetails = (tour) => {
-    setIsModalOpen(true);
+    setIsModalTourOpen(true);
     setSelectedTour(tour);
   };
 
   // Функция для закрытия модального окна
   const handleCloseModalDetails = () => {
-    setIsModalOpen(false);
+    setIsModalTourOpen(false);
     setSelectedTour({});
   };
+
+  // Открытие/закрытие модального окна описания компании
+  const handleOpenModalDataCompany = () => setIsModalDataCompanyOpen(true);
+  const handleCloseModalDataCompany = () => setIsModalDataCompanyOpen(false);
 
 
   // Открытие/закрытие диалогового окна (окно подтверждения действия)
@@ -223,7 +230,9 @@ const UserPage = () => {
     <main className="main userPage">
       <div className="userPage__container container">
 
-        <ButtonCreate fetchNewTours={fetchNewTours} />
+        { isUser &&
+          <ButtonCreate fetchNewTours={fetchNewTours} />
+        }
 
         {
           loading ? (
@@ -246,7 +255,7 @@ const UserPage = () => {
                           handleReject={() => handleReject(newTour.tourId)}
                           handleAccept={() =>handleAccept(newTour.tourId)}
                           onDetailsClick={() => handleOpenModalDetails(newTour)}
-                          showButtons={true}
+                          showButtons={isUser}
                         />
                       ))
                     ) : <div>Новых заявок нет</div>
@@ -271,6 +280,7 @@ const UserPage = () => {
                           handleAccept={() =>handleAccept(acceptedTour.tourId)}
                           onDetailsClick={() => handleOpenModalDetails(acceptedTour)}
                           showButtons={false}
+                          onDataCompanyClick
                         />
                       ))
                     ) || <span>0</span>
@@ -304,7 +314,20 @@ const UserPage = () => {
           )
         }
 
-        <ModalTourDesc userData={userData} tour={selectedTour} isOpen={isModalOpen} onClose={handleCloseModalDetails} />
+        <ModalTourDesc
+          userData={userData}
+          tour={selectedTour}
+          isOpen={isModalTourOpen}
+          onClose={handleCloseModalDetails}
+        />
+
+        <ModalUserData
+          userData={userData}
+          tour={selectedTour}
+          isOpen={isModalDataCompanyOpen}
+          onClose={handleCloseModalDataCompany}
+        />
+
         <AlertDialog
           isOpen={isOpenAlertDialog}
           onClose={handleCloseAlertDialog}

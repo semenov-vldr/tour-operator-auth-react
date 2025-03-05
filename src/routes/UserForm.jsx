@@ -8,7 +8,6 @@ import { db } from "../firebase";
 import useAuth from "../assets/hooks/useAuth.js";
 
 import { getSession } from "../session";
-import useAuthentication from "../assets/hooks/useAuthentication.js";
 import Header from "../assets/components/Header/Header";
 
 
@@ -27,21 +26,21 @@ const UserForm = () => {
 
 
   const userConfig = {
-    legal_name: "",
-    trade_name: "",
-    inn: "",
-    kpp: "",
-    legal_address: "",
-    actual_address: "",
-    bank_account_number: "",
-    correspondent_account_number: "",
-    bank_bik: "",
-    bank_name_and_location: "",
-    ceo_name: "",
-    contact_person_name: "",
-    phone: "",
-    email: "",
-    correspondence_address: "",
+    legal_name: "",                   // Юридическое название
+    trade_name: "",                   // Торговое наименование
+    inn: "",                          // ИНН
+    kpp: "",                          // КПП
+    legal_address: "",                // Юридический адрес
+    actual_address: "",               // Фактический адрес
+    bank_account_number: "",          // Номер расчётного счёта в банке
+    correspondent_account_number: "", // Корреспонденский счёт в банке
+    bank_bik: "",                     // БИК банка
+    bank_name_and_location: "",       // Наименование и адрес местонахождения банка
+    ceo_name: "",                     // Ген.директор Турагентства
+    contact_person_name: "",          // Контактное лицо от Турагентства
+    phone: "",                        // Телефон
+    email: "",                        // Почта
+    correspondence_address: "",       // Адрес для отправки Корреспонденции
     admin: false,
     date_of_registration: new Date().toJSON().slice(0, 10),
   }

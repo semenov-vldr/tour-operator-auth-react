@@ -1,12 +1,12 @@
-import Header from "../assets/components/Header/Header.jsx";
-import UserPage from "../assets/components/UserPage/UserPage.jsx";
+import Header from "../assets/components/Header/Header";
+import UserPage from "../assets/components/UserPage/UserPage";
 
 const Admin = () => {
 
   return (
     <>
       <Header pageUser="signIn" />
-      <UserPage />
+      <UserPage isUser={false} />
     </>
   );
 };
