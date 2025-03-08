@@ -1,12 +1,10 @@
-import { Box, Button, Container, TextField, Typography } from "@mui/material";
 import { useState, useEffect } from "react";
+import { Box, Button, Container, TextField, Typography } from "@mui/material";
 import { useNavigate } from "react-router-dom";
 import InputMask from 'react-input-mask';
-
 import { ref, update } from "firebase/database";
 import { db } from "../firebase";
 import useAuth from "../assets/hooks/useAuth.js";
-
 import { getSession } from "../session";
 import Header from "../assets/components/Header/Header";
 
@@ -17,7 +15,6 @@ const UserForm = () => {
   const userId = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
-  //const { userAuth, loading } = useAuthentication();
 
   useEffect(() => {
     let session = getSession();
@@ -110,7 +107,7 @@ const UserForm = () => {
         />
 
         <InputMask
-          mask="999999999999"
+          mask="9999999999"
           value={user.inn}
           onChange={handleChange}
         >

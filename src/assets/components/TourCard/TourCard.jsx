@@ -1,14 +1,11 @@
 import CloseIcon from "../../icons/close.svg";
-import Tooltip from '@mui/material/Tooltip';
 
 
 const TourCard = ({ tour, userData, deleteTour, handleReject, handleAccept, onDetailsClick, showButtons }) => {
   return (
     <article className="userPage__card">
       <div className="userPage__card-top">
-        <Tooltip title="Подробнее" placement="bottom">
-        <span className="userPage__card-sender">{userData.legal_name}</span>
-        </Tooltip>
+        <span className="userPage__card-sender">{userData.legal_name || "Компания неизвестна"}</span>
         <button onClick={deleteTour} className="userPage__card-close">
           <img src={CloseIcon} />
         </button>
@@ -25,7 +22,7 @@ const TourCard = ({ tour, userData, deleteTour, handleReject, handleAccept, onDe
       </div>
       <div className="userPage__card-buttons">
         {
-          showButtons &&
+          !showButtons &&
           <>
             <button onClick={handleReject} className="button button-cancel">Отклонить</button>
             <button onClick={handleAccept} className="button button-success">Принять</button>

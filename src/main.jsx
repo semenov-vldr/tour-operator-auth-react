@@ -9,6 +9,7 @@ import Register from "./routes/Register";
 import UserForm from './routes/UserForm';
 import User from "./routes/User";
 import Admin from "./routes/Admin";
+import TravelAgencies from "./routes/TravelAgencies";
 
 
 const router = createBrowserRouter([
@@ -40,6 +41,11 @@ const router = createBrowserRouter([
   {
     path: "/admin",
     element: <Admin/>,
+  },
+
+  {
+    path: "/travel-agencies",
+    element: <TravelAgencies/>,
   },
 
 ]);

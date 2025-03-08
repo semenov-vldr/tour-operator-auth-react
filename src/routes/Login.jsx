@@ -40,8 +40,10 @@ export default function Login() {
     try {
       let loginResponse = await signInUser(email, password);
       startSession(loginResponse.user);
-      //navigate("/user");
-      navigate('/user', { replace: true });
+      const isAdmin = email === "admin@mail.ru";
+      const routeTo = isAdmin ? "/admin" : "/user";
+      //navigate('/user', { replace: true });
+      navigate(routeTo, { replace: true });
     } catch (error) {
       console.error(error.message);
       setError(error.message);

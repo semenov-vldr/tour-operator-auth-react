@@ -2,9 +2,10 @@
 @import "../../sass/mixins"
 
 .userPage
-  //background-color: #0D1117
   padding-top: 64px
   color: #fff
+  @include mobile
+    padding-top: 32px
 
   &__container
     display: flex
@@ -45,6 +46,9 @@
 
     &-close
       width: 26px
+      transition: 0.2s ease-in
+      &:hover
+        opacity: 0.7
 
     &-sender
       font-size: 14px

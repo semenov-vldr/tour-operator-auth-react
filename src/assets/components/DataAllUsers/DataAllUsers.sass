@@ -1,0 +1,51 @@
+@import "../../sass/containers"
+@import "../../sass/mixins"
+
+.data-table
+  padding-top: 64px
+  @include mobile
+    padding-top: 32px
+
+  &__container
+    display: flex
+    flex-direction: column
+    gap: 80px
+    @include mobile
+      gap: 56px
+
+  &__body
+    width: 100%
+    max-width: 1000px
+    background-color: #182533 !important
+
+
+
+  &__accordion
+    background-color: inherit !important
+    button
+      //background-color: #f1f1f1
+      color: #fff
+    &:has(button[aria-expanded ="false"]):not(:last-child)
+      border-bottom: 1px solid rgba(#fff, 0.5)
+
+  &__accordion-title
+    span
+      font-size: 24px
+      @include mobile
+        font-size: 18px
+
+
+  &__accordion-row
+    background-color: #182533
+    th, td
+      font-size: 18px
+      color: #fff
+      @include mobile
+        font-size: 14px
+    th
+      font-weight: 500
+    &:hover
+      background-color: #273c54
+
+  .css-1lj39kh-MuiAccordionDetails-root
+    padding: 8px 0px 16px

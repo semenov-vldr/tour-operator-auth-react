@@ -9,11 +9,12 @@ import useAuth from "../../hooks/useAuth.js";
 import ButtonCreate from "../ButtonCreate/ButtonCreate";
 import TourCard from "../TourCard/TourCard";
 import AlertDialog from "../AlertDialog/AlertDialog";
-import ModalUserData from "../ModalUserData/ModalUserData.jsx";
+import ButtonNavigateToTravelAgencies from "../ButtonNavigateToTravelAgencies/ButtonNavigateToTravelAgencies";
 
 
 const UserPage = ({isUser = true}) => {
   const userId = useAuth();
+
   const [newTours, setNewTours] = useState([]);
   const [acceptedTours, setAcceptedTours] = useState([]);
   const [rejectedTours, setRejectedTours] = useState([]);
@@ -24,8 +25,6 @@ const UserPage = ({isUser = true}) => {
   const [isModalTourOpen, setIsModalTourOpen] = useState(false);
   // Определяем по какой карточки тура кликнули кнопку "Подробнее" для вызова модального окна
   const [selectedTour, setSelectedTour] = useState({});
-
-  const [isModalDataCompanyOpen, setIsModalDataCompanyOpen] = useState(false);
 
   // Окно поп-ап подтверждения действия с карточкой тура
   const [isOpenAlertDialog, setIsOpenAlertDialog] = useState(false);
@@ -48,10 +47,6 @@ const UserPage = ({isUser = true}) => {
     setIsModalTourOpen(false);
     setSelectedTour({});
   };
-
-  // Открытие/закрытие модального окна описания компании
-  const handleOpenModalDataCompany = () => setIsModalDataCompanyOpen(true);
-  const handleCloseModalDataCompany = () => setIsModalDataCompanyOpen(false);
 
 
   // Открытие/закрытие диалогового окна (окно подтверждения действия)
@@ -119,13 +114,88 @@ const UserPage = ({isUser = true}) => {
   };
 
 
+
+
+  // -------- Код для страницы АДМИНА ---------------------
+
+  const getAllUserIds = async () => {
+    try {
+      const usersRef = ref(db, 'users');
+      const snapshot = await get(usersRef);
+
+      if (snapshot.exists()) {
+        const usersData = snapshot.val();
+        return Object.keys(usersData); // Возвращает массив ключей (userId)
+      } else {
+        return []; // Нет пользователей
+      }
+    } catch (error) {
+      console.error('Ошибка при получении UserID:', error);
+      return []; // Возвращаем пустой массив в случае ошибки
+    }
+  };
+
+  const fetchNewToursForAdmin = async (userIds, setNewTours) => {
+    let allNewTours = []; // Массив для хранения всех новых туров от всех пользователей
+
+    for (const userId of userIds) {
+      try {
+        const dbToursRef = ref(db, `users/${userId}/tours`);
+        const snapshotTours = await get(dbToursRef);
+
+        if (snapshotTours.exists()) {
+          const tours = Object.entries(snapshotTours.val())
+            .filter(([, tour]) => tour.status === "new")
+            .map(([tourId, tourData]) => ({ // Добавляем tourId
+              tourId: tourId,
+              userId: userId, // Добавляем userId
+              ...tourData,
+            }));
+          allNewTours = allNewTours.concat(tours); // Добавляем туры к общему массиву
+        }
+      } catch (error) {
+        console.error(`Ошибка при получении туров для пользователя ${userId}:`, error);
+      }
+    }
+
+    setNewTours(allNewTours); // Устанавливаем все туры в состояние
+  };
+
+
+  const [newToursAdmin, setNewToursAdmin] = useState([]);
+  const [userIds, setUserIds] = useState([]);
+
+  useEffect(() => {
+    const loadData = async () => {
+      const allUserIds = await getAllUserIds(); // Получаем все UserID
+      setUserIds(allUserIds);
+    };
+    loadData();
+  }, []);
+
+  useEffect(() => {
+    if (userIds.length > 0) {
+      fetchNewToursForAdmin(userIds, setNewToursAdmin);
+    }
+  }, [userIds]);
+
+
+
+  console.log(newToursAdmin)
+
+
+
+
+  // --------КОНЕЦ Кода для страницы АДМИНА ---------------------
+
+
   useEffect(() => {
     if (userId) {
       Promise.all([
         fetchNewTours(),
         fetchAcceptedTours(),
         fetchRejectedTours(),
-        fetchUserData()
+        fetchUserData(),
       ]).then(() => setLoading(false));
     }
 
@@ -226,6 +296,9 @@ const UserPage = ({isUser = true}) => {
       }
   };
 
+
+
+
   return (
     <main className="main userPage">
       <div className="userPage__container container">
@@ -235,10 +308,47 @@ const UserPage = ({isUser = true}) => {
         }
 
         {
+          !isUser &&
+          <ButtonNavigateToTravelAgencies route="there" />
+        }
+
+        {
           loading ? (
             <span>Загрузка...</span>
           ) : (
             <>
+
+              {/*TEST*/}
+              <section className="userPage__section">
+                <h2 className="title-section yellow">Новые заявки для АДМИНА (ТЕСТ)</h2>
+
+                <div className="userPage__cards">
+
+                  {
+                    newToursAdmin.length > 0 ? (
+                      newToursAdmin.map(newTourAdmin => (
+                        <TourCard
+                          key={newTourAdmin.tourId}
+                          tour={newTourAdmin}
+                          userData={userData}
+                          deleteTour={() => handleDelete(newTourAdmin.tourId)}
+                          handleReject={() => handleReject(newTourAdmin.tourId)}
+                          handleAccept={() =>handleAccept(newTourAdmin.tourId)}
+                          onDetailsClick={() => handleOpenModalDetails(newTourAdmin)}
+                          showButtons={isUser}
+                        />
+                      ))
+                    ) : <div>Новых заявок нет</div>
+                  }
+                </div>
+
+              </section>
+
+
+
+
+
+
               <section className="userPage__section">
                 <h2 className="title-section yellow">Новые заявки</h2>
 
@@ -279,7 +389,7 @@ const UserPage = ({isUser = true}) => {
                           handleReject={() => handleReject(acceptedTour.tourId)}
                           handleAccept={() =>handleAccept(acceptedTour.tourId)}
                           onDetailsClick={() => handleOpenModalDetails(acceptedTour)}
-                          showButtons={false}
+                          showButtons={isUser}
                           onDataCompanyClick
                         />
                       ))
@@ -303,7 +413,7 @@ const UserPage = ({isUser = true}) => {
                           handleReject={() => handleReject(rejectedTour.tourId)}
                           handleAccept={() =>handleAccept(rejectedTour.tourId)}
                           onDetailsClick={() => handleOpenModalDetails(rejectedTour)}
-                          showButtons={false}
+                          showButtons={isUser}
                         />
                       ))
                     ) || <span>0</span>
@@ -319,13 +429,6 @@ const UserPage = ({isUser = true}) => {
           tour={selectedTour}
           isOpen={isModalTourOpen}
           onClose={handleCloseModalDetails}
-        />
-
-        <ModalUserData
-          userData={userData}
-          tour={selectedTour}
-          isOpen={isModalDataCompanyOpen}
-          onClose={handleCloseModalDataCompany}
         />
 
         <AlertDialog
