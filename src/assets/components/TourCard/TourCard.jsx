@@ -2,6 +2,10 @@ import CloseIcon from "../../icons/close.svg";
 
 
 const TourCard = ({ tour, userData, deleteTour, handleReject, handleAccept, onDetailsClick, showButtons }) => {
+
+  //const owner = userIds.find(userId => userId === tour.userId);
+  //console.log(owner)
+
   return (
     <article className="userPage__card">
       <div className="userPage__card-top">
@@ -22,7 +26,7 @@ const TourCard = ({ tour, userData, deleteTour, handleReject, handleAccept, onDe
       </div>
       <div className="userPage__card-buttons">
         {
-          !showButtons &&
+          showButtons &&
           <>
             <button onClick={handleReject} className="button button-cancel">Отклонить</button>
             <button onClick={handleAccept} className="button button-success">Принять</button>
