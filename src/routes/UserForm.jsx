@@ -90,7 +90,7 @@ const UserForm = () => {
           fullWidth
           value={user.legal_name}
           onChange={handleChange}
-          autoComplete="off"
+          autocomplete="organization"
           required
         />
 
@@ -177,8 +177,7 @@ const UserForm = () => {
               variant="outlined"
               sx={{ mt: 3 }}
               fullWidth
-
-              autoComplete="off"
+              autocomplete="cc-number"
 
             />}
         </InputMask>
@@ -238,7 +237,7 @@ const UserForm = () => {
           fullWidth
           value={user.ceo_name}
           onChange={handleChange}
-          autoComplete="off"
+          autocomplete="name"
 
         />
 
@@ -250,7 +249,7 @@ const UserForm = () => {
           fullWidth
           value={user.contact_person_name}
           onChange={handleChange}
-          autoComplete="off"
+          autocomplete="name"
 
         />
 

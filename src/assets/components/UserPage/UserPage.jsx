@@ -248,9 +248,9 @@ const UserPage = ({isUser = true}) => {
                     newTours.length > 0 ? (
                       newTours.map(newTour => (
                         <TourCard
+                          userId={newTour.userId}
                           key={newTour.tourId}
                           tour={newTour}
-                          userData={userData}
                           deleteTour={() => handleDelete(newTour.tourId)}
                           handleReject={() => handleReject(newTour.tourId)}
                           handleAccept={() =>handleAccept(newTour.tourId)}
@@ -272,9 +272,9 @@ const UserPage = ({isUser = true}) => {
                     acceptedTours.length > 0 && (
                       acceptedTours.map(acceptedTour => (
                         <TourCard
+                          userId={acceptedTour.userId}
                           key={acceptedTour.tourId}
                           tour={acceptedTour}
-                          userData={userData}
                           deleteTour={() => handleDelete(acceptedTour.tourId)}
                           handleReject={() => handleReject(acceptedTour.tourId)}
                           handleAccept={() =>handleAccept(acceptedTour.tourId)}
@@ -283,7 +283,7 @@ const UserPage = ({isUser = true}) => {
                           onDataCompanyClick
                         />
                       ))
-                    ) || <span>0</span>
+                    ) || <span>Одобренных заявок нет</span>
                   }
                 </div>
               </section>
@@ -296,9 +296,9 @@ const UserPage = ({isUser = true}) => {
                     rejectedTours.length > 0 && (
                       rejectedTours.map(rejectedTour => (
                         <TourCard
+                          userId={rejectedTour.userId}
                           key={rejectedTour.tourId}
                           tour={rejectedTour}
-                          userData={userData}
                           deleteTour={() => handleDelete(rejectedTour.tourId)}
                           handleReject={() => handleReject(rejectedTour.tourId)}
                           handleAccept={() =>handleAccept(rejectedTour.tourId)}
@@ -306,7 +306,7 @@ const UserPage = ({isUser = true}) => {
                           showButtons={false}
                         />
                       ))
-                    ) || <span>0</span>
+                    ) || <span>Отклоненных заявок нет</span>
                   }
                 </div>
               </section>

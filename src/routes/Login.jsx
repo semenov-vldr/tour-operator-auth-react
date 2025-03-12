@@ -42,7 +42,6 @@ export default function Login() {
       startSession(loginResponse.user);
       const isAdmin = email === "admin@mail.ru";
       const routeTo = isAdmin ? "/admin" : "/user";
-      //navigate('/user', { replace: true });
       navigate(routeTo, { replace: true });
     } catch (error) {
       console.error(error.message);

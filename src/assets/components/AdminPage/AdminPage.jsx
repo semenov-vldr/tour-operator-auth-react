@@ -6,7 +6,7 @@ import { ref, get, update, remove } from "firebase/database";
 import { db } from "../../../firebase.js";
 import useAuth from "../../hooks/useAuth.js";
 
-import ButtonCreate from "../ButtonCreate/ButtonCreate";
+
 import TourCard from "../TourCard/TourCard";
 import AlertDialog from "../AlertDialog/AlertDialog";
 import ButtonNavigateToTravelAgencies from "../ButtonNavigateToTravelAgencies/ButtonNavigateToTravelAgencies";
@@ -116,6 +116,10 @@ const AdminPage = () => {
 
 
 
+
+
+
+
   // -------- Код для страницы АДМИНА ---------------------
 
   const getAllUserIds = async () => {
@@ -169,21 +173,12 @@ const AdminPage = () => {
       setUserIds(allUserIds);
     };
     loadData();
-  }, []);
-
-  useEffect(() => {
-    if (userIds.length > 0) {
-      fetchNewToursForAdmin(userIds, setNewToursAdmin);
-    }
+    userIds && fetchNewToursForAdmin(userIds, setNewToursAdmin);
   }, [userIds]);
 
 
 
-  //console.log(`Все ID пользователей: ${userIds}`);
-
-
   // ------------------------------- КОНЕЦ Кода для страницы АДМИНА ---------------------
-
 
   useEffect(() => {
     if (userId) {
@@ -253,33 +248,27 @@ const AdminPage = () => {
 
 
 
-
-
-
-
-
 // --- Обработчики для кнопок "принять"/"отклонить"/"удалить" ---
-  const handleAccept = (tourId) => {
-    const text = "Вы действительно хотите принять заявку на тур?";
+  const handleAction = (tourId, actionType) => {
+    const actionTexts = {
+      accept: "Вы действительно хотите принять заявку на тур?",
+      reject: "Вы действительно хотите отклонить заявку?",
+      delete: "Вы действительно хотите удалить заявку на тур?",
+    };
+    const text = actionTexts[actionType];
+    if (!text) {
+      console.error("Неизвестный тип действия:", actionType);
+      return;
+    }
+
     handleOpenAlertDialog();
     setTextAlertDialog(text);
-    setActionDataAlertDialog({ tourId: tourId, actionType: "accept" } );
+    setActionDataAlertDialog({ tourId: tourId, actionType: actionType });
   };
 
-  const handleReject = (tourId) => {
-    const text = "Вы действительно хотите отклонить заявку?";
-    handleOpenAlertDialog();
-    setTextAlertDialog(text);
-    setActionDataAlertDialog({ tourId: tourId, actionType: "reject" } );
-  };
-
-  const handleDelete = (tourId) => {
-    console.log(tourId)
-    const text = "Вы действительно хотите удалить заявку на тур?";
-    handleOpenAlertDialog();
-    setTextAlertDialog(text);
-    setActionDataAlertDialog({ tourId: tourId, actionType: 'delete' });
-  };
+  const handleAccept = (tourId) => handleAction(tourId, "accept");
+  const handleReject = (tourId) => handleAction(tourId, "reject");
+  const handleDelete = (tourId) => handleAction(tourId, "delete");
   // -----------
 
 
@@ -300,8 +289,7 @@ const AdminPage = () => {
     }
   };
 
-
-
+  //console.log(newToursAdmin)
 
 
   return (
@@ -325,15 +313,14 @@ const AdminPage = () => {
                     newToursAdmin.length > 0 ? (
                       newToursAdmin.map(newTourAdmin => (
                         <TourCard
+                          userId={newTourAdmin.userId}
                           key={newTourAdmin.tourId}
                           tour={newTourAdmin}
-                          userData={userData}
                           deleteTour={() => handleDelete(newTourAdmin.tourId)}
                           handleReject={() => handleReject(newTourAdmin.tourId)}
                           handleAccept={() =>handleAccept(newTourAdmin.tourId)}
                           onDetailsClick={() => handleOpenModalDetails(newTourAdmin)}
                           showButtons={true}
-                          userIds={userIds}
                         />
                       ))
                     ) : <div>Новых заявок нет</div>
@@ -351,18 +338,17 @@ const AdminPage = () => {
                     acceptedTours.length > 0 && (
                       acceptedTours.map(acceptedTour => (
                         <TourCard
+                          userId={acceptedTour.userId}
                           key={acceptedTour.tourId}
                           tour={acceptedTour}
-                          userData={userData}
                           deleteTour={() => handleDelete(acceptedTour.tourId)}
                           handleReject={() => handleReject(acceptedTour.tourId)}
                           handleAccept={() =>handleAccept(acceptedTour.tourId)}
                           onDetailsClick={() => handleOpenModalDetails(acceptedTour)}
                           showButtons={false}
-                          onDataCompanyClick
                         />
                       ))
-                    ) || <span>0</span>
+                    ) || <span>Новых одобренных нет</span>
                   }
                 </div>
               </section>
@@ -375,9 +361,9 @@ const AdminPage = () => {
                     rejectedTours.length > 0 && (
                       rejectedTours.map(rejectedTour => (
                         <TourCard
+                          userId={rejectedTour.userId}
                           key={rejectedTour.tourId}
                           tour={rejectedTour}
-                          userData={userData}
                           deleteTour={() => handleDelete(rejectedTour.tourId)}
                           handleReject={() => handleReject(rejectedTour.tourId)}
                           handleAccept={() =>handleAccept(rejectedTour.tourId)}
@@ -385,7 +371,7 @@ const AdminPage = () => {
                           showButtons={false}
                         />
                       ))
-                    ) || <span>0</span>
+                    ) || <span>Нет отклоненных заявок</span>
                   }
                 </div>
               </section>

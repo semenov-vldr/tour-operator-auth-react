@@ -73,6 +73,7 @@ const ButtonCreate = ({ fetchNewTours }) => {
       const tourData = {
         ...optionTour,
         tourId: newTourKey,
+        userId: userId
       };
 
       // Удаляем незаполненные поля в БД

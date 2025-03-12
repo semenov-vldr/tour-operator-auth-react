@@ -1,10 +1,24 @@
 import CloseIcon from "../../icons/close.svg";
+import {useEffect, useState} from "react";
+import {get, ref} from "firebase/database";
+import {db} from "../../../firebase.js";
 
 
-const TourCard = ({ tour, userData, deleteTour, handleReject, handleAccept, onDetailsClick, showButtons }) => {
+const TourCard = ({ userId, tour, deleteTour, handleReject, handleAccept, onDetailsClick, showButtons }) => {
 
-  //const owner = userIds.find(userId => userId === tour.userId);
-  //console.log(owner)
+  const [userData, setUserData] = useState([]);
+
+  const fetchUserData = async (userId) => {
+    const dbUserDataRef = ref(db, `users/${userId}`);
+    const snapshotUserData = await get(dbUserDataRef);
+    if (snapshotUserData.exists()) {
+      setUserData(snapshotUserData.val());
+    }
+  };
+
+  useEffect(() => {
+    fetchUserData(userId);
+  }, []);
 
   return (
     <article className="userPage__card">
