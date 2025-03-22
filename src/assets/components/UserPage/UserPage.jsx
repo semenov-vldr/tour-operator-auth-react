@@ -9,10 +9,9 @@ import useAuth from "../../hooks/useAuth.js";
 import ButtonCreate from "../ButtonCreate/ButtonCreate";
 import TourCard from "../TourCard/TourCard";
 import AlertDialog from "../AlertDialog/AlertDialog";
-import ButtonNavigateToTravelAgencies from "../ButtonNavigateToTravelAgencies/ButtonNavigateToTravelAgencies";
 
 
-const UserPage = ({isUser = true}) => {
+const UserPage = () => {
   const userId = useAuth();
 
   const [newTours, setNewTours] = useState([]);

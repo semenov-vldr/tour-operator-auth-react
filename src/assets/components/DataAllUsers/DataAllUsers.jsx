@@ -2,12 +2,12 @@ import "./DataAllUsers.sass";
 import { Accordion, AccordionSummary, AccordionDetails, Typography, Table, TableBody, TableCell, TableContainer, TableRow, Paper  } from '@mui/material';
 
 import AccordionActions from '@mui/material/AccordionActions';
-//import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
+import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 
 import {useEffect, useState} from "react";
 import {db} from "../../../firebase.js";
 import {get, ref} from "firebase/database";
-import ButtonNavigateToTravelAgencies from "../ButtonNavigateToTravelAgencies/ButtonNavigateToTravelAgencies";
+import NavigateToTravelAgencies from "../NavigateToTravelAgencies/NavigateToTravelAgencies.jsx";
 
 
 export default function DataAllUsers() {
@@ -36,41 +36,41 @@ export default function DataAllUsers() {
 
   function TableRowItem({titleText, userDbValue}) {
     return (
-      <TableRow
-        className="data-table__accordion-row"
-      >
+      <TableRow className="data-table__accordion-row">
         <TableCell component="th" scope="row">{titleText}</TableCell>
         <TableCell align="right">{userDbValue}</TableCell>
       </TableRow>
     )
   }
 
-
-
   return (
 
     <main className="main data-table">
       <div className="data-table__container container">
 
-        <ButtonNavigateToTravelAgencies route="back" />
+        <NavigateToTravelAgencies route="back" />
 
         <div className="data-table__body">
           {
             usersDb.map((userDb, index) => (
               <Accordion className="data-table__accordion" key={index}>
                 <AccordionSummary
-                  // expandIcon={<ExpandMoreIcon />}
+                  expandIcon={<ExpandMoreIcon sx={{ color: '#fff' }} />}
                   aria-controls="panel1-content"
                   className="data-table__accordion-title"
                 >
-                  <Typography component="span">{userDb.trade_name}</Typography>
+                  <Typography component="div">
+                    <span>{userDb.legal_name}</span>
+                    <span className="data-table__accordion-email">{userDb.email}</span>
+                    <span className="data-table__accordion-phone">{userDb.phone}</span>
+                  </Typography>
                 </AccordionSummary>
                 <AccordionDetails>
-                  <TableContainer component={Paper}>
+                  <TableContainer className="table-container" component={Paper}>
                     <Table sx={{ minWidth: 350 }} aria-label="simple table">
                       <TableBody>
 
-                        <TableRowItem titleText="Юридическое название" userDbValue={userDb.legal_name}/>
+                        <TableRowItem titleText="Торговое название" userDbValue={userDb.trade_name}/>
                         <TableRowItem titleText="ИНН" userDbValue={userDb.inn}/>
                         <TableRowItem titleText="КПП" userDbValue={userDb.kpp}/>
                         <TableRowItem titleText="Юридический адрес" userDbValue={userDb.legal_address}/>

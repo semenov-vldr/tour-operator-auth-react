@@ -1,6 +1,6 @@
 import {useNavigate} from "react-router-dom";
 
-const ButtonNavigateToTravelAgencies = ({route}) => {
+const NavigateToTravelAgencies = ({route}) => {
   let navigate = useNavigate();
 
   const routes = {
@@ -30,4 +30,4 @@ const ButtonNavigateToTravelAgencies = ({route}) => {
   );
 };
 
-export default ButtonNavigateToTravelAgencies;
+export default NavigateToTravelAgencies;

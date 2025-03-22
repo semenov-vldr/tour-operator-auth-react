@@ -15,7 +15,7 @@
 
   &__body
     width: 100%
-    max-width: 1000px
+    //max-width: 1000px
     background-color: #182533 !important
 
 
@@ -23,16 +23,47 @@
   &__accordion
     background-color: inherit !important
     button
-      //background-color: #f1f1f1
       color: #fff
+      &[aria-expanded ="true"]
+        //color: #F0BD26
+
     &:has(button[aria-expanded ="false"]):not(:last-child)
       border-bottom: 1px solid rgba(#fff, 0.5)
 
+
+
   &__accordion-title
+
+    .MuiAccordionSummary-content
+      & > div
+        width: 100%
+        display: grid
+        grid-template-columns: repeat(3, 1fr)
+        padding-right: 16px
+        gap: 16px
+        @include mobile
+          display: flex
+          align-items: center
+          justify-content: space-between
     span
-      font-size: 24px
+      font-size: 18px
+      white-space: nowrap
       @include mobile
-        font-size: 18px
+        font-size: 14px
+    .data-table__accordion-email,
+    .data-table__accordion-phone
+      font-size: 14px
+      color: lightgrey
+      @include mobile
+        font-size: 12px
+        max-width: 150px
+        overflow-x: auto
+    .data-table__accordion-phone
+      @include mobile
+        display: none
+    .data-table__accordion-email
+      @media (max-width: 400px)
+        display: none
 
 
   &__accordion-row
@@ -44,8 +75,17 @@
         font-size: 14px
     th
       font-weight: 500
+      opacity: 0.8
     &:hover
       background-color: #273c54
 
   .css-1lj39kh-MuiAccordionDetails-root
-    padding: 8px 0px 16px
+    padding: 8px 0 16px
+
+  .MuiAccordionSummary-expandIconWrapper // Стрелка аккордиона
+    flex: 0 0 24px
+
+
+  .table-container
+    border-top: 1px solid white
+    border-radius: 0

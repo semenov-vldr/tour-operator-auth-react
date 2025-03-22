@@ -1,30 +1,33 @@
 import "../UserPage/UserPage.sass";
 import { useState, useEffect } from "react";
 
-import ModalTourDesc from "../ModalTourDesc/ModalTourDesc";
 import { ref, get, update, remove } from "firebase/database";
 import { db } from "../../../firebase.js";
 import useAuth from "../../hooks/useAuth.js";
 
-
 import TourCard from "../TourCard/TourCard";
 import AlertDialog from "../AlertDialog/AlertDialog";
-import ButtonNavigateToTravelAgencies from "../ButtonNavigateToTravelAgencies/ButtonNavigateToTravelAgencies";
+import NavigateToTravelAgencies from "../NavigateToTravelAgencies/NavigateToTravelAgencies";
+
+import useNewAdminTours from "./useNewAdminTours";
+import NewAcceptedTours from "./NewAcceptedTours";
+import fetchNewRejectedTours from "./fetchNewRejectedTours";
 
 
 const AdminPage = () => {
-  const userId = useAuth();
+  //const userId = useAuth();
+  const userId = "BXIjBvVqe5XNRndLhHSiveR2Jzk2";
+  //const userId = "NUA8MNAZe1QnTzm1gi805KWOjVj1";
+
+  const { newToursAdmin } = useNewAdminTours();
+  const { acceptedToursAdmin } = NewAcceptedTours();
+  const { rejectedToursAdmin } = fetchNewRejectedTours();
 
   const [newTours, setNewTours] = useState([]);
   const [acceptedTours, setAcceptedTours] = useState([]);
   const [rejectedTours, setRejectedTours] = useState([]);
-  const [userData, setUserData] = useState([]);
   const [loading, setLoading] = useState(true);
 
-  // состояние для открытия/закрытия модального окна
-  const [isModalTourOpen, setIsModalTourOpen] = useState(false);
-  // Определяем по какой карточки тура кликнули кнопку "Подробнее" для вызова модального окна
-  const [selectedTour, setSelectedTour] = useState({});
 
   // Окно поп-ап подтверждения действия с карточкой тура
   const [isOpenAlertDialog, setIsOpenAlertDialog] = useState(false);
@@ -36,157 +39,22 @@ const AdminPage = () => {
     actionType: null,
   });
 
-  // Функция для открытия модального окна
-  const handleOpenModalDetails = (tour) => {
-    setIsModalTourOpen(true);
-    setSelectedTour(tour);
-  };
-
-  // Функция для закрытия модального окна
-  const handleCloseModalDetails = () => {
-    setIsModalTourOpen(false);
-    setSelectedTour({});
-  };
-
 
   // Открытие/закрытие диалогового окна (окно подтверждения действия)
   const handleOpenAlertDialog = () => setIsOpenAlertDialog(true);
   const handleCloseAlertDialog = () => setIsOpenAlertDialog(false);
 
 
-  // Рендер новых заявок
-  const fetchNewTours = async () => {
-    const dbToursRef = ref(db, `users/${userId}/tours`);
-    const snapshotTours = await get(dbToursRef);
-    if (snapshotTours.exists()) {
-      const tours = Object.entries(snapshotTours.val())
-        .filter(([, tour]) => tour.status === "new")
-        .map(([, tourData]) => ({
-          ...tourData
-        }));
-      setNewTours(tours);
-    } else {
-      setNewTours([]);
-    }
-  };
-
-  // Рендер принятых заявок
-  const fetchAcceptedTours = async () => {
-    const dbToursRef = ref(db, `users/${userId}/tours`);
-    const snapshotTours = await get(dbToursRef);
-    if (snapshotTours.exists()) {
-      const tours = Object.entries(snapshotTours.val())
-        .filter(([, tour]) => tour.status === true)
-        .map(([, tourData]) => ({
-          ...tourData
-        }));
-      setAcceptedTours(tours);
-    } else {
-      setAcceptedTours([]);
-    }
-  };
-
-
-  // Рендер отклоненных заявок
-  const fetchRejectedTours = async () => {
-    const dbToursRef = ref(db, `users/${userId}/tours`);
-    const snapshotTours = await get(dbToursRef);
-    if (snapshotTours.exists()) {
-      const tours = Object.entries(snapshotTours.val())
-        .filter(([, tour]) => tour.status === false)
-        .map(([, tourData]) => ({
-          ...tourData
-        }));
-      setRejectedTours(tours);
-    } else {
-      setRejectedTours([]);
-    }
-  };
-
-
-// Получение данных для кнопки "Подробнее"
-  const fetchUserData = async () => {
-    const dbUserDataRef = ref(db, `users/${userId}`);
-    const snapshotUserData = await get(dbUserDataRef);
-    if (snapshotUserData.exists()) {
-      setUserData(snapshotUserData.val());
-    }
-  };
 
 
 
 
 
-
-
-
-  // -------- Код для страницы АДМИНА ---------------------
-
-  const getAllUserIds = async () => {
-    try {
-      const usersRef = ref(db, 'users');
-      const snapshot = await get(usersRef);
-
-      if (snapshot.exists()) {
-        const usersData = snapshot.val();
-        return Object.keys(usersData); // Возвращает массив ключей (userId)
-      } else {
-        return []; // Нет пользователей
-      }
-    } catch (error) {
-      console.error('Ошибка при получении UserID:', error);
-      return []; // Возвращаем пустой массив в случае ошибки
-    }
-  };
-
-  const fetchNewToursForAdmin = async (userIds, setNewTours) => {
-    let allNewTours = []; // Массив для хранения всех новых туров от всех пользователей
-
-    for (const userId of userIds) {
-      try {
-        const dbToursRef = ref(db, `users/${userId}/tours`);
-        const snapshotTours = await get(dbToursRef);
-
-        if (snapshotTours.exists()) {
-          const tours = Object.entries(snapshotTours.val())
-            .filter(([, tour]) => tour.status === "new")
-            .map(([, tourData]) => ({
-              userId: userId,
-              ...tourData,
-            }));
-          allNewTours = allNewTours.concat(tours); // Добавляем туры к общему массиву
-        }
-      } catch (error) {
-        console.error(`Ошибка при получении туров для пользователя ${userId}:`, error);
-      }
-    }
-    setNewTours(allNewTours); // Устанавливаем все туры в состояние
-  };
-
-
-  const [newToursAdmin, setNewToursAdmin] = useState([]);
-  const [userIds, setUserIds] = useState([]);
-
-  useEffect(() => {
-    const loadData = async () => {
-      const allUserIds = await getAllUserIds(); // Получаем все UserID
-      setUserIds(allUserIds);
-    };
-    loadData();
-    userIds && fetchNewToursForAdmin(userIds, setNewToursAdmin);
-  }, [userIds]);
-
-
-
-  // ------------------------------- КОНЕЦ Кода для страницы АДМИНА ---------------------
 
   useEffect(() => {
     if (userId) {
       Promise.all([
-        fetchNewTours(),
-        fetchAcceptedTours(),
-        fetchRejectedTours(),
-        fetchUserData(),
+
       ]).then(() => setLoading(false));
     }
 
@@ -289,14 +157,12 @@ const AdminPage = () => {
     }
   };
 
-  //console.log(newToursAdmin)
-
 
   return (
     <main className="main userPage">
       <div className="userPage__container container">
 
-        <ButtonNavigateToTravelAgencies route="there" />
+        <NavigateToTravelAgencies route="there" />
 
         {
           loading ? (
@@ -319,7 +185,6 @@ const AdminPage = () => {
                           deleteTour={() => handleDelete(newTourAdmin.tourId)}
                           handleReject={() => handleReject(newTourAdmin.tourId)}
                           handleAccept={() =>handleAccept(newTourAdmin.tourId)}
-                          onDetailsClick={() => handleOpenModalDetails(newTourAdmin)}
                           showButtons={true}
                         />
                       ))
@@ -335,8 +200,8 @@ const AdminPage = () => {
 
                 <div className="userPage__cards">
                   {
-                    acceptedTours.length > 0 && (
-                      acceptedTours.map(acceptedTour => (
+                    acceptedToursAdmin.length > 0 && (
+                      acceptedToursAdmin.map(acceptedTour => (
                         <TourCard
                           userId={acceptedTour.userId}
                           key={acceptedTour.tourId}
@@ -344,7 +209,6 @@ const AdminPage = () => {
                           deleteTour={() => handleDelete(acceptedTour.tourId)}
                           handleReject={() => handleReject(acceptedTour.tourId)}
                           handleAccept={() =>handleAccept(acceptedTour.tourId)}
-                          onDetailsClick={() => handleOpenModalDetails(acceptedTour)}
                           showButtons={false}
                         />
                       ))
@@ -358,8 +222,8 @@ const AdminPage = () => {
 
                 <div className="userPage__cards">
                   {
-                    rejectedTours.length > 0 && (
-                      rejectedTours.map(rejectedTour => (
+                    rejectedToursAdmin.length > 0 && (
+                      rejectedToursAdmin.map(rejectedTour => (
                         <TourCard
                           userId={rejectedTour.userId}
                           key={rejectedTour.tourId}
@@ -367,24 +231,16 @@ const AdminPage = () => {
                           deleteTour={() => handleDelete(rejectedTour.tourId)}
                           handleReject={() => handleReject(rejectedTour.tourId)}
                           handleAccept={() =>handleAccept(rejectedTour.tourId)}
-                          onDetailsClick={() => handleOpenModalDetails(rejectedTour)}
                           showButtons={false}
                         />
                       ))
-                    ) || <span>Нет отклоненных заявок</span>
+                    ) || <span>Отклоненных заявок нет</span>
                   }
                 </div>
               </section>
             </>
           )
         }
-
-        <ModalTourDesc
-          userData={userData}
-          tour={selectedTour}
-          isOpen={isModalTourOpen}
-          onClose={handleCloseModalDetails}
-        />
 
         <AlertDialog
           isOpen={isOpenAlertDialog}
