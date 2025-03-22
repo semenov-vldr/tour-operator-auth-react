@@ -142,9 +142,6 @@ const AdminPage = () => {
 
 
   async function deleteTour (tourId) {
-    const text = "Вы действительно хотите принять заявку?";
-    handleOpenAlertDialog();
-    setTextAlertDialog(text);
     const tourRef = ref(db, `users/${userId}/tours/${tourId}`);
     try {
       await remove(tourRef);
