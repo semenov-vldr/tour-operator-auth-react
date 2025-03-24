@@ -48,7 +48,7 @@ const Header = ( { pageUser } ) => {
       <div className="header__container container">
         <img className="header__logo header__icon" src={isMobile ? logo : logoText} alt="logo" />
 
-        { pageUser === "signIn" && (
+        { pageUser === "signIn" &&
           <>
             <div className="header__user">
               <span className="header__user-email">{email}</span>
@@ -56,7 +56,7 @@ const Header = ( { pageUser } ) => {
             </div>
             <button className="header__button" onClick={onLogout}>Выйти</button>
           </>
-          )}
+          }
 
       </div>
     </header>
