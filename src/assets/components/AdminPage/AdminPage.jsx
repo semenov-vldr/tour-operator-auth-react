@@ -2,7 +2,7 @@ import "../UserPage/UserPage.sass";
 
 import TourCard from "../TourCard/TourCard";
 import NavigateToTravelAgencies from "../NavigateToTravelAgencies/NavigateToTravelAgencies";
-import useAdminTours from "./useAdminTours";
+import ToursForAdmin from "./ToursForAdmin";
 
 
 
@@ -12,19 +12,19 @@ const AdminPage = () => {
     tours: newTours,
     loading: newLoading,
     //error: newError
-  } = useAdminTours("new");
+  } = ToursForAdmin("new");
 
   const {
     tours: acceptedTours,
     loading: acceptedLoading,
     //error: acceptedError
-  } = useAdminTours(true);
+  } = ToursForAdmin(true);
 
   const {
     tours: rejectedTours,
     loading: rejectedLoading,
     //error: rejectedError
-  } = useAdminTours(false);
+  } = ToursForAdmin(false);
 
 
 

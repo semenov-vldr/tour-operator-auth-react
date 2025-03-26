@@ -2,8 +2,8 @@ import { useState, useEffect } from 'react';
 import { ref, onValue } from 'firebase/database';
 import { db } from "../../../firebase.js";
 
+
 const fetchToursForUser = async (userId, status) => {
-  console.log(userId)
   const toursRef = ref(db, `users/${userId}/tours`);
   return new Promise((resolve, reject) => {
     onValue(toursRef, (snapshot) => {
@@ -21,6 +21,7 @@ const fetchToursForUser = async (userId, status) => {
     }, reject);
   });
 };
+
 
 const fetchAllTours = async (status) => {
   const usersRef = ref(db, 'users');
@@ -46,7 +47,7 @@ const fetchAllTours = async (status) => {
   });
 };
 
-const useAdminTours = (status, userId) => {
+const ToursForAdmin = (status) => {
   const [tours, setTours] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
@@ -58,13 +59,12 @@ const useAdminTours = (status, userId) => {
       setError(null);
 
       try {
-        const toursData = userId
-          ? await fetchToursForUser(userId, status)
-          : await fetchAllTours(status);
+        const toursData = await fetchAllTours(status);
 
         setTours(toursData);
         setLoading(false);
-      } catch (err) {
+      }
+      catch (err) {
         console.error('Ошибка:', err);
         setError(err);
         setLoading(false);
@@ -72,9 +72,9 @@ const useAdminTours = (status, userId) => {
     };
 
     loadData();
-  }, [status, userId]);
+  }, [status]);
 
   return { tours, loading, error };
 };
 
-export default useAdminTours;
+export default ToursForAdmin;

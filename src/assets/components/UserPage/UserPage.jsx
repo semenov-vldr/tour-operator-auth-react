@@ -1,49 +1,62 @@
 import "./UserPage.sass";
 import { useState, useEffect } from "react";
-
-import { db } from "../../../firebase.js";
 import useAuth from "../../hooks/useAuth.js";
 
 import ButtonCreate from "../ButtonCreate/ButtonCreate";
 import TourCard from "../TourCard/TourCard";
-import useAdminTours from "../AdminPage/useAdminTours";
+import ToursForUser from "../AdminPage/ToursForUser";
 
 
 const UserPage = () => {
-  const userId = useAuth();
+  const { userId: authUserId, loading: authLoading } = useAuth();
+
+  //const [loading, setLoading] = useState(true);
+  const [userId, setUserId] = useState(null);
 
 
-  const [loading, setLoading] = useState(true);
+  useEffect(() => {
+    console.log(authUserId)
+    if (authUserId) {
+      setUserId(authUserId);
+    }
+  }, [authUserId]);
 
 
   const {
     tours: newTours,
     loading: newLoading,
     //error: newError
-  } = useAdminTours("new", userId);
+  } = ToursForUser("new", userId);
 
   const {
     tours: acceptedTours,
     loading: acceptedLoading,
     //error: acceptedError
-  } = useAdminTours(true, userId);
+  } = ToursForUser(true, userId);
 
   const {
     tours: rejectedTours,
     loading: rejectedLoading,
     //error: rejectedError
-  } = useAdminTours(false, userId);
+  } = ToursForUser(false, userId);
 
 
 
+  // useEffect(() => {
+  //   if (userId) {
+  //     setLoading(false);
+  //   }
+  // }, [userId]);
 
-  useEffect(() => {
-    if (userId) {
-      Promise.all([
-      ]).then(() => setLoading(false));
-    }
 
-  }, [userId, db]);
+  // useEffect(() => {
+  //   console.log("UserPage: userId =", userId, ", authLoading =", authLoading);
+  //   setLoading(false);
+  //
+  //   console.log(acceptedTours);
+  // }, [userId, authLoading]);
+
+
 // ------------------------------
 
 
@@ -53,11 +66,10 @@ const UserPage = () => {
         <ButtonCreate />
 
         {
-          loading ? (
+          authLoading ? (
             <span>Загрузка...</span>
           ) : (
             <>
-
               <section className="userPage__section">
                 <h2 className="title-section yellow">Новые заявки</h2>
 

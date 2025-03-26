@@ -12,7 +12,7 @@ import Header from "../assets/components/Header/Header";
 const UserForm = () => {
   const ADMIN_EMAIL = "admin@mail.ru";
 
-  const userId = useAuth();
+  const { userId } = useAuth();
   const navigate = useNavigate();
   const [email, setEmail] = useState("");
 
@@ -38,7 +38,7 @@ const UserForm = () => {
     phone: "",                        // Телефон
     email: "",                        // Почта
     correspondence_address: "",       // Адрес для отправки Корреспонденции
-    admin: false,
+    admin: false,                     // Пользователь не является админом
     date_of_registration: new Date().toJSON().slice(0, 10),
   }
 
