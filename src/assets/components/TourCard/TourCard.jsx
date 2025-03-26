@@ -11,16 +11,12 @@ const TourCard = ({ tour, showButtons }) => {
   const [userData, setUserData] = useState([]);
   // Определяем по какой карточки тура кликнули кнопку "Подробнее" для вызова модального окна
   const [selectedTour, setSelectedTour] = useState({});
-
   // состояние для открытия/закрытия модального окна
   const [isModalTourOpen, setIsModalTourOpen] = useState(false);
-
   // Окно поп-ап подтверждения действия с карточкой тура
   const [isOpenAlertDialog, setIsOpenAlertDialog] = useState(false);
-
   // Текст для диалогового окна после действия с карточкой тура
   const [textAlertDialog, setTextAlertDialog] = useState("");
-
   // Состояние для хранения информации о действии
   const [actionDataAlertDialog, setActionDataAlertDialog] = useState(null);
 

@@ -14,7 +14,7 @@ import { namesOfExcursions, numberOfPeople, budget, food, typeOfAccommodation } 
 
 
 
-const ButtonCreate = ({ fetchNewTours }) => {
+const ButtonCreate = () => {
   const [open, setOpen] = useState(false);
   const [userId, setUserId] = useState(null);
 
@@ -87,8 +87,7 @@ const ButtonCreate = ({ fetchNewTours }) => {
       console.log('Данные тура успешно отправлены в Firebase');
       setOptionTour(tourConfig);
       handleClose();
-      // Обновляем список новых туров после создания новой заявки
-      fetchNewTours();
+;
     } catch (error) {
       console.error('Ошибка отправки данных:', error);
       alert('Произошла ошибка при отправке заявки.');
