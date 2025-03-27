@@ -73,7 +73,7 @@ export default function Login() {
             label="Пароль"
             variant="outlined"
             type="password"
-            autoComplete="new-password"
+            autoComplete="current-password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             sx={{mt: 3}}
