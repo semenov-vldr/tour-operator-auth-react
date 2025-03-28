@@ -5,7 +5,7 @@ import react from '@vitejs/plugin-react';
 export default defineConfig({
   plugins: [react()],
   //base: "https://semenov-vldr.github.io/tour-operator-auth-react/",
-  base: "/tour-operator-auth-react/",
+  //base: "/tour-operator-auth-react/",
 
   server: {
     host: true, // или '0.0.0.0'

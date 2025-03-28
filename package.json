@@ -3,12 +3,11 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://semenov-vldr.github.io/tour-operator-auth-react/",
   "scripts": {
     "dev": "vite --open",
     "build": "vite build",
     "lint": "eslint .",
-    "preview": "vite preview",
+    "preview": "vite preview --open",
     "predeploy": "npm run build",
     "deploy": "gh-pages -d dist"
   },
