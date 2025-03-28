@@ -15,7 +15,7 @@ import TravelAgencies from "./routes/TravelAgencies";
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Navigate to="login"/>,
+    element: <Navigate to="/login"/>,
     errorElement: <ErrorPage/>,
   },
   {
