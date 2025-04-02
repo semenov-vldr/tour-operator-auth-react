@@ -1,5 +1,5 @@
-import Header from "../assets/components/Header/Header.jsx";
-import DataAllUsers from "../assets/components/DataAllUsers/DataAllUsers.jsx";
+import Header from "../assets/components/Header/Header";
+import DataAllUsers from "../assets/components/DataAllUsers/DataAllUsers";
 
 const TravelAgencies = () => {
 

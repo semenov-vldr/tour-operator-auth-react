@@ -4,7 +4,7 @@ import useAuth from "../../hooks/useAuth.js";
 
 import ButtonCreate from "../ButtonCreate/ButtonCreate";
 import TourCard from "../TourCard/TourCard";
-import ToursForUser from "../AdminPage/ToursForUser";
+import ToursForUser from "./ToursForUser";
 
 
 const UserPage = () => {
@@ -128,7 +128,6 @@ const UserPage = () => {
             </>
           )
         }
-
 
       </div>
     </main>

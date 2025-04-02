@@ -1,77 +1,75 @@
 import { useState, useEffect } from 'react';
-import { ref, onValue } from 'firebase/database';
+import { ref, onValue, off } from 'firebase/database';
 import { db } from "../../../firebase.js";
 
-
-const fetchToursForUser = async (userId, status) => {
-  const toursRef = ref(db, `users/${userId}/tours`);
-  return new Promise((resolve, reject) => {
-    onValue(toursRef, (snapshot) => {
-      if (snapshot.exists()) {
-        const toursData = snapshot.val();
-        const toursArray = Object.entries(toursData)
-          .filter(([, tour]) => tour.status === status)
-          .map(([, tourData]) => ({
-            ...tourData,
-          }));
-        resolve(toursArray);
-      } else {
-        resolve([]);
-      }
-    }, reject);
-  });
-};
-
-
-const fetchAllTours = async (status) => {
-  const usersRef = ref(db, 'users');
-  return new Promise((resolve, reject) => {
-    onValue(usersRef, (snapshot) => {
-      if (snapshot.exists()) {
-        const usersData = snapshot.val();
-        const userIds = Object.keys(usersData);
-
-        const allToursPromises = userIds.map(async (currentUserId) => {
-          return fetchToursForUser(currentUserId, status);
-        });
-
-        Promise.all(allToursPromises)
-          .then((allToursArrays) => {
-            resolve(allToursArrays.flat());
-          })
-          .catch(reject);
-      } else {
-        resolve([]);
-      }
-    }, reject);
-  });
-};
 
 const ToursForAdmin = (status) => {
   const [tours, setTours] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
 
-
   useEffect(() => {
-    const loadData = async () => {
+    let unsubscribe;
+
+    const loadData = () => {
       setLoading(true);
       setError(null);
 
-      try {
-        const toursData = await fetchAllTours(status);
+      const usersRef = ref(db, 'users');
 
-        setTours(toursData);
+      unsubscribe = onValue(usersRef, (snapshot) => {
+        if (snapshot.exists()) {
+          const usersData = snapshot.val();
+          const userIds = Object.keys(usersData);
+
+          // Use Promise.all to fetch tours concurrently
+          Promise.all(userIds.map(async (currentUserId) => {
+            const userToursRef = ref(db, `users/${currentUserId}/tours`);
+            return new Promise(resolve => { // convert onValue to promise
+              onValue(userToursRef, (snapshotTours) => {
+                if (snapshotTours.exists()) {
+                  const tours = Object.entries(snapshotTours.val())
+                    .filter(([, tour]) => tour.status === status)
+                    .map(([tourId, tourData]) => ({
+                      tourId: tourId, // add tourId
+                      userId: currentUserId, // add userId
+                      ...tourData,
+                    }));
+                  resolve(tours);
+                } else {
+                  resolve([]);
+                }
+              });
+            });
+
+          })).then(allToursArrays => {
+            const allTours = allToursArrays.flat();
+            setTours(allTours);
+            setLoading(false);
+          }).catch(err => {
+            console.error('Ошибка при получении данных:', err);
+            setError(err);
+            setLoading(false);
+          });
+
+        } else {
+          setTours([]);
+          setLoading(false);
+        }
+      }, (error) => {
+        console.error('Ошибка при подписке на изменения:', error);
+        setError(error);
         setLoading(false);
-      }
-      catch (err) {
-        console.error('Ошибка:', err);
-        setError(err);
-        setLoading(false);
-      }
+      });
     };
 
     loadData();
+
+    return () => {
+      if (unsubscribe) {
+        off(ref(db, 'users'), 'value', unsubscribe);
+      }
+    };
   }, [status]);
 
   return { tours, loading, error };
