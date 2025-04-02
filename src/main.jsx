@@ -15,7 +15,7 @@ import TravelAgencies from "./routes/TravelAgencies";
 const router = createBrowserRouter([
   {
     path: "/",
-    element: <Navigate to="/login"/>,
+    element: <Navigate to="login"/>,
     errorElement: <ErrorPage/>,
   },
   {
@@ -48,7 +48,7 @@ const router = createBrowserRouter([
     element: <TravelAgencies/>,
   },
 
-]);
+], { basename: "/tour-operator-auth-react" });
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>

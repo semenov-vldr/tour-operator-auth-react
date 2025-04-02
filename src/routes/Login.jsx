@@ -6,7 +6,7 @@ import {startSession} from "../session";
 import useAuthentication from "../assets/hooks/useAuthentication.js";
 import Header from "../assets/components/Header/Header";
 
-
+//import cover_spb from "../assets/icons/cover-spb.jpg";
 
 export default function Login() {
 
@@ -53,6 +53,7 @@ export default function Login() {
   return (
     <>
       <Header />
+
       <Container maxWidth="xs" sx={{mt: 15}}>
         <Typography variant="h5" component="h1" gutterBottom textAlign="center">
           Вход в личный кабинет
@@ -83,7 +84,7 @@ export default function Login() {
           <Button variant="contained" type="submit" sx={{mt: 3}} fullWidth>Войти</Button>
           <Box sx={{mt: 2}}>
             Нет аккаунта?
-            <Link href="/register"> Зарегистрируйтесь</Link>
+            <Link href="./register"> Зарегистрируйтесь</Link>
           </Box>
         </Box>
       </Container>

@@ -94,7 +94,7 @@ export default function Register() {
 
         <Button variant="contained" type="submit" sx={{mt: 3}} fullWidth>Зарегистрироваться</Button>
         <Box sx={{mt: 2}}>
-          Уже есть аккаунт? <Link href="/login">Войти</Link>
+          Уже есть аккаунт? <Link href="./login">Войти</Link>
         </Box>
       </Box>
     </Container>
