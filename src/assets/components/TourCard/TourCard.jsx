@@ -130,7 +130,7 @@ const TourCard = ({ tour, showButtons }) => {
       <article className="userPage__card">
         <div className="userPage__card-top">
           <span className="userPage__card-sender">{userData.legal_name || "Компания неизвестна"}</span>
-          <button onClick={() => handleDelete(tour.tourId)} className="userPage__card-close">
+          <button onClick={() => handleDelete(tour.tourId)} className="userPage__card-close" title="Удалить заявку">
             <img src={CloseIcon} />
           </button>
         </div>

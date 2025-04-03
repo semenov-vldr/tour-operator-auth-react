@@ -9,14 +9,20 @@ import reverseDate from "../../hooks/reverseDate.js";
 import { db, auth } from "../../../firebase.js";
 import "./ButtonCreate.sass";
 import AddIcon from "../../icons/add.svg";
+import Alert from '@mui/material/Alert';
+import CheckIcon from '@mui/icons-material/Check';
 
 import { namesOfExcursions, numberOfPeople, budget, food, typeOfAccommodation } from "./answer_options.js";
+
+
+
 
 
 
 const ButtonCreate = () => {
   const [open, setOpen] = useState(false);
   const [userId, setUserId] = useState(null);
+  const [showAlert, setShowAlert] = useState(false);
 
 
   // Используем useEffect и onAuthStateChanged для отслеживания состояния аутентификации и получения userId при входе пользователя в систему
@@ -27,6 +33,15 @@ const ButtonCreate = () => {
 
     return () => unsubscribe();
   }, [auth, setUserId]);
+
+
+  function SimpleAlert() {
+    return (
+      <Alert className="alert-success" icon={<CheckIcon fontSize="inherit" />} severity="success" onClose={() => setShowAlert(false)}>
+        Ваша заявка на тур успешно создана и отправлена. Менеджер SPB Travel Group с вами свяжется.
+      </Alert>
+    );
+  }
 
 
   const handleClickOpen = () => setOpen(true);
@@ -87,7 +102,8 @@ const ButtonCreate = () => {
       console.log('Данные тура успешно отправлены в Firebase');
       setOptionTour(tourConfig);
       handleClose();
-;
+      setShowAlert(true);
+
     } catch (error) {
       console.error('Ошибка отправки данных:', error);
       alert('Произошла ошибка при отправке заявки.');
@@ -101,6 +117,7 @@ const ButtonCreate = () => {
       Новая заявка
       <img className="button-create__icon" src={AddIcon} />
     </button>
+    {showAlert && <SimpleAlert />}
     <Dialog
       open={open}
       onClose={handleClose}

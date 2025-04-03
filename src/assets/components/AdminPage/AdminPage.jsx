@@ -27,7 +27,6 @@ const AdminPage = () => {
   } = ToursForAdmin(false);
 
 
-
   return (
     <main className="main userPage">
       <div className="userPage__container container">
@@ -36,7 +35,7 @@ const AdminPage = () => {
 
             <>
               <section className="userPage__section">
-                <h2 className="title-section yellow">Новые заявки</h2>
+                <h2 className={`title-section yellow ${newTours.length > 0 && "animation"}`}>Новые заявки</h2>
 
                 {
                   !newLoading ? (

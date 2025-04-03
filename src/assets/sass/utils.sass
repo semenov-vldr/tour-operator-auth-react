@@ -26,6 +26,15 @@
       height: 20px
   &.yellow::before
     background-color: #F0BD26
+  &.yellow.animation::before
+    animation: bgcolor 1s infinite
+  @keyframes bgcolor
+    0%, 100%
+      background-color: #F8DB85
+    50%
+      background-color: #F0BD26
+      transform: scale(1.1)
+
   &.green::before
     background-color: #477956
   &.red::before

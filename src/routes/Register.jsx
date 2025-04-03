@@ -68,6 +68,7 @@ export default function Register() {
           sx={{mt: 1}}
           fullWidth
           required={true}
+          type="email"
         />
         <TextField
           label="Пароль"

@@ -54,7 +54,7 @@ const Header = ( { pageUser } ) => {
               <span className="header__user-email">{email}</span>
               <img className="header__user-icon header__icon" src={userIcon} alt="user-icon" />
             </div>
-            <button className="header__button" onClick={onLogout}>Выйти</button>
+            <button className="header__button" onClick={onLogout} title="Выйти из аккаунта">Выйти</button>
           </>
           }
 

@@ -69,6 +69,7 @@ export default function Login() {
             sx={{mt: 1}}
             fullWidth
             required={true}
+            type="email"
             inputmode="email"
           />
           <TextField

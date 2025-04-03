@@ -42,3 +42,22 @@
     flex-direction: column
     gap: 4px
     width: 100%
+
+.alert-success
+  position: fixed
+  top: 65px
+  left: 50%
+  transform: translateX(-50%)
+  width: fit-content
+  max-width: 1400px
+  padding: 6px 24px
+  animation: alert 0.5s
+  @include mobile
+    width: 90%
+    top: 60px
+
+  @keyframes alert
+    from
+      top: 0
+    to
+      top: 65px
