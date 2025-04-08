@@ -120,7 +120,7 @@ const UserForm = () => {
               fullWidth
               autoComplete="off"
               required
-              inputmode="numeric"
+              inputProps={{ inputMode: 'numeric' }}
             />}
         </InputMask>
 
@@ -138,7 +138,7 @@ const UserForm = () => {
               fullWidth
               autoComplete="off"
               required
-              inputmode="numeric"
+              inputProps={{ inputMode: 'numeric' }}
             />
           }
         </InputMask>
@@ -181,7 +181,7 @@ const UserForm = () => {
               fullWidth
               autocomplete="cc-number"
               required
-              inputmode="numeric"
+              inputProps={{ inputMode: 'numeric' }}
             />}
         </InputMask>
 
@@ -199,7 +199,7 @@ const UserForm = () => {
               fullWidth
               autoComplete="off"
               required
-              inputmode="numeric"
+              inputProps={{ inputMode: 'numeric' }}
             />}
         </InputMask>
 
@@ -218,7 +218,8 @@ const UserForm = () => {
               onChange={handleChange}
               autoComplete="off"
               required
-              inputmode="numeric"
+              inputProps={{ inputMode: 'numeric' }}
+
             />}
         </InputMask>
 

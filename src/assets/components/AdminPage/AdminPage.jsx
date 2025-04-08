@@ -3,6 +3,7 @@ import "../UserPage/UserPage.sass";
 import TourCard from "../TourCard/TourCard";
 import NavigateToTravelAgencies from "../NavigateToTravelAgencies/NavigateToTravelAgencies";
 import ToursForAdmin from "./ToursForAdmin";
+import SkeletonCardTemplate from "../SkeletonCardTemplate/SkeletonCardTemplate";
 
 
 
@@ -33,7 +34,6 @@ const AdminPage = () => {
 
         <NavigateToTravelAgencies route="there" />
 
-            <>
               <section className="userPage__section">
                 <h2 className={`title-section yellow ${newTours.length > 0 && "animation"}`}>Новые заявки</h2>
 
@@ -54,10 +54,12 @@ const AdminPage = () => {
                       }
                     </div>
 
-                  ) : <span>Загрузка...</span>
+                  ) : <div className="userPage__cards">
+                    <SkeletonCardTemplate />
+                    <SkeletonCardTemplate />
+                  </div>
                 }
               </section>
-
 
 
               <section className="userPage__section">
@@ -79,7 +81,10 @@ const AdminPage = () => {
                       }
                     </div>
 
-                  ) : <span>Загрузка...</span>
+                  ) : <div className="userPage__cards">
+                    <SkeletonCardTemplate />
+                    <SkeletonCardTemplate />
+                  </div>
                 }
               </section>
 
@@ -102,10 +107,13 @@ const AdminPage = () => {
                       }
                     </div>
 
-                  ) : <span>Загрузка...</span>
+                  ) : <div className="userPage__cards">
+                    <SkeletonCardTemplate />
+                    <SkeletonCardTemplate />
+                  </div>
                 }
               </section>
-            </>
+
 
 
 

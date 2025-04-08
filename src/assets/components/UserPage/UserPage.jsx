@@ -5,17 +5,16 @@ import useAuth from "../../hooks/useAuth.js";
 import ButtonCreate from "../ButtonCreate/ButtonCreate";
 import TourCard from "../TourCard/TourCard";
 import ToursForUser from "./ToursForUser";
+import SkeletonCardTemplate from "../SkeletonCardTemplate/SkeletonCardTemplate";
+
 
 
 const UserPage = () => {
   const { userId: authUserId, loading: authLoading } = useAuth();
-
-  //const [loading, setLoading] = useState(true);
   const [userId, setUserId] = useState(null);
 
 
   useEffect(() => {
-    console.log(authUserId)
     if (authUserId) {
       setUserId(authUserId);
     }
@@ -41,40 +40,21 @@ const UserPage = () => {
   } = ToursForUser(false, userId);
 
 
-
-  // useEffect(() => {
-  //   if (userId) {
-  //     setLoading(false);
-  //   }
-  // }, [userId]);
-
-
-  // useEffect(() => {
-  //   console.log("UserPage: userId =", userId, ", authLoading =", authLoading);
-  //   setLoading(false);
-  //
-  //   console.log(acceptedTours);
-  // }, [userId, authLoading]);
-
-
-// ------------------------------
-
-
   return (
     <main className="main userPage">
       <div className="userPage__container container">
         <ButtonCreate />
 
         {
-          authLoading ? (
-            <span>Загрузка...</span>
-          ) : (
-            <>
-              <section className="userPage__section">
-                <h2 className="title-section yellow">Новые заявки</h2>
+          !authLoading &&
+          <>
+          <section className="userPage__section">
+            <h2 className="title-section yellow">Новые заявки</h2>
+
+            {
+              !newLoading ? (
 
                 <div className="userPage__cards">
-
                   {
                     newTours.length > 0 ? (
                       newTours.map(newTour => (
@@ -87,47 +67,66 @@ const UserPage = () => {
                     ) : <div>Новых заявок нет</div>
                   }
                 </div>
+              ) :  <div className="userPage__cards">
+                <SkeletonCardTemplate />
+                <SkeletonCardTemplate />
+              </div>
+            }
+          </section>
 
-              </section>
+          <section className="userPage__section">
+          <h2 className="title-section green">Одобренные заявки</h2>
 
-              <section className="userPage__section">
-                <h2 className="title-section green">Одобренные заявки</h2>
-
-                <div className="userPage__cards">
-                  {
-                    acceptedTours.length > 0 && (
-                      acceptedTours.map(acceptedTour => (
-                        <TourCard
-                          key={acceptedTour.tourId}
-                          tour={acceptedTour}
-                          showButtons={false}
-                        />
-                      ))
-                    ) || <span>Одобренных заявок нет</span>
-                  }
-                </div>
-              </section>
-
-              <section className="userPage__section">
-                <h2 className="title-section red">Отклоненные заявки</h2>
-
-                <div className="userPage__cards">
-                  {
-                    rejectedTours.length > 0 && (
-                      rejectedTours.map(rejectedTour => (
-                        <TourCard
-                          key={rejectedTour.tourId}
-                          tour={rejectedTour}
-                          showButtons={false}
-                        />
-                      ))
-                    ) || <span>Отклоненных заявок нет</span>
-                  }
-                </div>
-              </section>
-            </>
-          )
+        {
+          !acceptedLoading ? (
+          <div className="userPage__cards">
+        {
+          acceptedTours.length > 0 && (
+          acceptedTours.map(acceptedTour => (
+          <TourCard
+          key={acceptedTour.tourId}
+          tour={acceptedTour}
+          showButtons={false}
+          />
+          ))
+          ) || <span>Одобренных заявок нет</span>
         }
+          </div>
+          ) : <div className="userPage__cards">
+            <SkeletonCardTemplate />
+            <SkeletonCardTemplate />
+          </div>
+        }
+          </section>
+
+          <section className="userPage__section">
+          <h2 className="title-section red">Отклоненные заявки</h2>
+
+        {
+          !rejectedLoading ? (
+          <div className="userPage__cards">
+        {
+          rejectedTours.length > 0 && (
+          rejectedTours.map(rejectedTour => (
+          <TourCard
+          key={rejectedTour.tourId}
+          tour={rejectedTour}
+          showButtons={false}
+          />
+          ))
+          ) || <span>Отклоненных заявок нет</span>
+        }
+          </div>
+          ) : <div className="userPage__cards">
+            <SkeletonCardTemplate />
+            <SkeletonCardTemplate />
+          </div>
+        }
+          </section>
+          </>
+
+        }
+
 
       </div>
     </main>
