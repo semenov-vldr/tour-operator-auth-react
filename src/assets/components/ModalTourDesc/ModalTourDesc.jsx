@@ -57,7 +57,7 @@ const ModalTourDesc = ({tour, userData, isOpen, onClose}) => {
               tour.comment && (
                 <li className="modal__item">
                   <span>Комментарий:</span>
-                  <span>{tour.comment || ""}</span>
+                  <span>{tour.comment}</span>
                 </li>
               )
             }

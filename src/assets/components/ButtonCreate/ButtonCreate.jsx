@@ -143,6 +143,7 @@ const ButtonCreate = () => {
           label="Укажите город поездки"
           onChange={handleChange}
           fullWidth
+          required
         >
           {namesOfExcursions.map(option => (
             <MenuItem key={option.value} value={option.value}>
@@ -162,6 +163,7 @@ const ButtonCreate = () => {
               type="date"
               name="date_start"
               onChange={handleChange}
+              required
             />
           </div>
 
@@ -174,6 +176,7 @@ const ButtonCreate = () => {
               type="date"
               name="date_end"
               onChange={handleChange}
+              required
             />
           </div>
 
@@ -186,6 +189,7 @@ const ButtonCreate = () => {
             label="Планируемое количество человек"
             onChange={handleChange}
             fullWidth
+            required
           >
             {numberOfPeople.map(option => (
               <MenuItem key={option.value} value={option.value}>
@@ -201,6 +205,7 @@ const ButtonCreate = () => {
             label="Питание"
             onChange={handleChange}
             fullWidth
+            required
           >
             {food.map(option => (
               <MenuItem key={option.value} value={option.value}>
@@ -216,6 +221,7 @@ const ButtonCreate = () => {
             label="Проживание"
             onChange={handleChange}
             fullWidth
+            required
           >
             {typeOfAccommodation.map(option => (
               <MenuItem key={option.value} value={option.value}>
@@ -232,6 +238,7 @@ const ButtonCreate = () => {
             label="Ваш бюджет на человека"
             onChange={handleChange}
             fullWidth
+            required
           >
             {budget.map(option => (
               <MenuItem key={option.value} value={option.value}>
@@ -247,6 +254,7 @@ const ButtonCreate = () => {
             name="comment"
             rows={3}
             onChange={handleChange}
+            required
           />
 
         </Box>

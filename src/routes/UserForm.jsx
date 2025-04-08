@@ -91,7 +91,7 @@ const UserForm = () => {
           value={user.legal_name}
           onChange={handleChange}
           autocomplete="organization"
-          required={true}
+          required
         />
 
         <TextField
@@ -119,7 +119,8 @@ const UserForm = () => {
               sx={{ mt: 3 }}
               fullWidth
               autoComplete="off"
-              required={true}
+              required
+              inputmode="numeric"
             />}
         </InputMask>
 
@@ -136,7 +137,8 @@ const UserForm = () => {
               sx={{ mt: 3 }}
               fullWidth
               autoComplete="off"
-              required={true}
+              required
+              inputmode="numeric"
             />
           }
         </InputMask>
@@ -150,7 +152,7 @@ const UserForm = () => {
           value={user.legal_address}
           onChange={handleChange}
           autoComplete="off"
-          required={true}
+          required
         />
 
         <TextField
@@ -162,7 +164,7 @@ const UserForm = () => {
           value={user.actual_address}
           onChange={handleChange}
           autoComplete="off"
-          required={true}
+          required
         />
 
         <InputMask
@@ -178,7 +180,8 @@ const UserForm = () => {
               sx={{ mt: 3 }}
               fullWidth
               autocomplete="cc-number"
-              required={true}
+              required
+              inputmode="numeric"
             />}
         </InputMask>
 
@@ -195,7 +198,8 @@ const UserForm = () => {
               sx={{ mt: 3 }}
               fullWidth
               autoComplete="off"
-              required={true}
+              required
+              inputmode="numeric"
             />}
         </InputMask>
 
@@ -213,7 +217,8 @@ const UserForm = () => {
               fullWidth
               onChange={handleChange}
               autoComplete="off"
-              required={true}
+              required
+              inputmode="numeric"
             />}
         </InputMask>
 
@@ -226,7 +231,7 @@ const UserForm = () => {
           value={user.bank_name_and_location}
           onChange={handleChange}
           autoComplete="off"
-          required={true}
+          required
         />
 
         <TextField
@@ -238,7 +243,7 @@ const UserForm = () => {
           value={user.ceo_name}
           onChange={handleChange}
           autocomplete="name"
-          required={true}
+          required
         />
 
         <TextField
@@ -250,7 +255,7 @@ const UserForm = () => {
           value={user.contact_person_name}
           onChange={handleChange}
           autocomplete="name"
-          required={true}
+          required
         />
 
         <InputMask
@@ -267,7 +272,7 @@ const UserForm = () => {
               sx={{ mt: 3 }}
               fullWidth
               autoComplete="off"
-              required={true}
+              required
             />
           }
         </InputMask>
@@ -281,7 +286,7 @@ const UserForm = () => {
           value={user.correspondence_address}
           onChange={handleChange}
           autoComplete="off"
-          required={true}
+          required
         />
 
         <Button size="large" variant="contained" type="submit" sx={{ mt: 3 }} fullWidth>Отправить</Button>
