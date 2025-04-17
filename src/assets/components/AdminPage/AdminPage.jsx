@@ -34,6 +34,7 @@ const AdminPage = () => {
 
         <NavigateToTravelAgencies route="there" />
 
+
               <section className="userPage__section">
                 <h2 className={`title-section yellow ${newTours.length > 0 && "animation"}`}>Новые заявки</h2>
 
@@ -75,6 +76,7 @@ const AdminPage = () => {
                               key={acceptedTour.tourId}
                               tour={acceptedTour}
                               showButtons={false}
+                              accepted = {true}
                             />
                           ))
                         ) || <span>Новых одобренных нет</span>

@@ -39,7 +39,7 @@
       gap: 24px
     @media (min-width: $width-tablet)
       &:hover
-        box-shadow: rgba(#fff, 0.3) 0 2px 12px 0, rgba(#fff, 0.4) 0 0 0 1px
+        //box-shadow: rgba(#fff, 0.3) 0 2px 12px 0, rgba(#fff, 0.4) 0 0 0 1px
 
     &-top
       display: flex
@@ -97,3 +97,40 @@
         grid-column: 1 / -1
       .button
         width: 100%
+
+    &-form
+      display: flex
+      flex-direction: column
+      gap: 16px
+
+    &-upload
+      display: flex
+      gap: 16px
+      label
+        display: flex
+        justify-content: center
+        align-items: center
+        gap: 8px
+        text-align: center
+        white-space: nowrap
+        width: 100%
+        overflow: hidden
+      &-text
+        text-overflow: ellipsis
+        overflow: hidden
+        padding: 2px 0
+
+      &-delete
+        padding: 4px 12px
+        flex: 0 0 50px
+
+      &-send-file
+        display: flex
+        width: 100%
+        align-items: center
+        justify-content: center
+        gap: 8px
+        svg
+          transition: $transition
+        &:hover svg
+          transform: translateX(10px)

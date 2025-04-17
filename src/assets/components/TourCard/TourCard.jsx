@@ -4,9 +4,12 @@ import { ref, get, update, remove } from "firebase/database";
 import {db} from "../../../firebase.js";
 import ModalTourDesc from "../ModalTourDesc/ModalTourDesc";
 import AlertDialog from "../AlertDialog/AlertDialog";
+import UploadFile from "../UserPage/UploadFile";
+import YandexDriveUpload from "../YandexDriveUpload";
 
 
-const TourCard = ({ tour, showButtons }) => {
+
+const TourCard = ({ tour, showButtons, accepted }) => {
 
   const [userData, setUserData] = useState([]);
   // Определяем по какой карточки тура кликнули кнопку "Подробнее" для вызова модального окна
@@ -19,7 +22,6 @@ const TourCard = ({ tour, showButtons }) => {
   const [textAlertDialog, setTextAlertDialog] = useState("");
   // Состояние для хранения информации о действии
   const [actionDataAlertDialog, setActionDataAlertDialog] = useState(null);
-
 
 
   const fetchUserData = async () => {
@@ -48,8 +50,6 @@ const TourCard = ({ tour, showButtons }) => {
   }, []);
 
 
-
-  // -------- Перенесенные функции из PageAdmin.jsx -----------------
 
   // Открытие/закрытие диалогового окна (окно подтверждения действия)
   const handleOpenAlertDialog = () => setIsOpenAlertDialog(true);
@@ -144,6 +144,11 @@ const TourCard = ({ tour, showButtons }) => {
             <span>Дата:</span>
             {tour.date_start} — {tour.date_end}</div>
         </div>
+
+        {
+          accepted && <UploadFile tour={tour} userId={tour.userId} />
+        }
+
         <div className="userPage__card-buttons">
           {
             showButtons &&
@@ -152,8 +157,18 @@ const TourCard = ({ tour, showButtons }) => {
               <button onClick={() => handleAccept(tour.tourId)} className="button button-success">Принять</button>
             </>
           }
+
           <button onClick={handleOpenModalDetails} className="button button-outline">Подробнее</button>
+
+
         </div>
+
+        {
+          accepted && <YandexDriveUpload/>
+        }
+
+
+
       </article>
 
       <ModalTourDesc

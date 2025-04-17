@@ -10,16 +10,17 @@
     "lint": "eslint .",
     "preview": "vite preview --open",
     "deploy": "npm run build && gh-pages -d dist"
-
   },
   "dependencies": {
     "@emotion/react": "^11.14.0",
     "@emotion/styled": "^11.14.0",
     "@mui/icons-material": "^6.4.7",
     "@mui/material": "^6.4.2",
+    "axios": "^1.8.4",
     "firebase": "^11.2.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "react-google-drive-picker": "^1.2.2",
     "react-input-mask": "^2.0.4",
     "react-router-dom": "^6.29.0",
     "sass": "^1.83.4"

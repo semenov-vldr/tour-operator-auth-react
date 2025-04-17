@@ -44,11 +44,43 @@ const UserForm = () => {
 
   const [user, setUser] = useState(userConfig);
 
+  // ------------ код на проверку заполненности user-form
+
+  // useEffect(() => {
+  //   const fetchUserData = async () => {
+  //     if (userId) {
+  //       try {
+  //         const userRef = ref(db, `/users/${userId}`);
+  //         const snapshot = await get(userRef);
+  //         if (snapshot.exists()) {
+  //           const userData = snapshot.val();
+  //           if (userData?.legal_name) {  // Check if legal_name exists and is not empty
+  //             navigate('/user'); // Redirect if legal_name is filled
+  //             return; // Exit the function
+  //           }
+  //           setUser(userData || { legal_name: "" }); // Set user data if it exists, otherwise initialize
+  //         }
+  //       } catch (error) {
+  //         console.error("Error fetching user data:", error);
+  //         // Handle error (e.g., show an error message to the user)
+  //       }
+  //     }
+  //   };
+  //
+  //   let session = getSession();
+  //   setEmail(session?.email || ""); // Use optional chaining
+  //   fetchUserData();
+  // }, [userId, navigate]);
+
+
+  //-------------
+
+
+
   const handleChange = (e) => {
     const { name, value } = e.target;
     setUser((prevUser) => ({ ...prevUser, [name]: value }));
   };
-
 
 
   const handleSubmit = async (e) => {
@@ -72,10 +104,11 @@ const UserForm = () => {
   };
 
 
+
   return (
     <>
     <Header />
-    <Container maxWidth="sm" sx={{ mt: 10 }}>
+    <Container maxWidth="sm" sx={{ mt: 7 }}>
       <Typography variant="h4" component="h1" gutterBottom textAlign="center">
         Данные вашей компании:
       </Typography>
@@ -121,6 +154,7 @@ const UserForm = () => {
               autoComplete="off"
               required
               inputProps={{ inputMode: 'numeric' }}
+              //helperText="Введите ИНН (10 или 12 цифр)"
             />}
         </InputMask>
 
@@ -290,7 +324,7 @@ const UserForm = () => {
           required
         />
 
-        <Button size="large" variant="contained" type="submit" sx={{ mt: 3 }} fullWidth>Отправить</Button>
+        <Button size="large" variant="contained" type="submit" sx={{ mt: 3, mb: 3 }} fullWidth>Отправить</Button>
       </Box>
 
     </Container>

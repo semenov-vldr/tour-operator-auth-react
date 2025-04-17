@@ -7,7 +7,7 @@ export default function SkeletonCardTemplate () {
       <div className="skeleton-header">
       <Skeleton
         animation="wave"
-        height={56}
+        height={50}
         width="40%"
         sx={{ bgcolor: '#a6b2ce5c' }}
       />
@@ -29,16 +29,19 @@ export default function SkeletonCardTemplate () {
       <Skeleton
         animation="wave"
         height={40}
-        width="100%"
         sx={{ bgcolor: '#a6b2ce5c' }}
         style={{ marginBottom: 12 }}
       />
       <Skeleton
         animation="wave"
         height={40}
-        width="100%"
         sx={{ bgcolor: '#a6b2ce5c' }}
-        style={{ marginBottom: 16 }}
+      />
+
+      <Skeleton
+        animation="wave"
+        height={100}
+        sx={{ bgcolor: '#a6b2ce5c' }}
       />
     </div>
   )
