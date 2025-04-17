@@ -37,11 +37,11 @@ const Header = ( { pageUser } ) => {
     return () => window.addEventListener(("resize"), handleResize);
   },[]);
 
-  const onLogout = async () => {
+  async function onLogout () {
     await logout();
     endSession();
     navigate("/login", { replace: true });
-  }
+  };
 
   return (
     <header className="header">

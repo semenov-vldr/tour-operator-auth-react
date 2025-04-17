@@ -3,13 +3,17 @@ import axios from 'axios';
 import DriveFolderUploadIcon from "@mui/icons-material/DriveFolderUpload";
 import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
 import SendRoundedIcon from "@mui/icons-material/SendRounded";
+import CircularProgress from '@mui/material/CircularProgress';
 
 function FileUpload() {
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploading, setUploading] = useState(false);
+  const [progress, setProgress] = useState(false);
   const [uploadedFileLink, setUploadedFileLink] = useState(null);
   const [uploadError, setUploadError] = useState(null);
   const token = "y0__xCYtPUGGNuWAyCNzKrtEue3WMzrz30qDYbI1DhSasqfKHrs"; // Получаем токен из .env
+
+  const pathPrograms = "/programs/";
 
   const handleFileChange = (event) => {
     setSelectedFile(event.target.files[0]);
@@ -31,10 +35,11 @@ function FileUpload() {
     setUploading(true);
     setUploadError(null);
     setUploadedFileLink(null);
+    setProgress(true);
 
     const formData = new FormData();
     formData.append('file', selectedFile);
-    formData.append('path', `/programs/${selectedFile.name}`); //  Указываем путь для сохранения (в корень, с именем файла)
+    formData.append('path', `${pathPrograms}${selectedFile.name}`); //  Указываем путь для сохранения (в корень, с именем файла)
 
     try {
       // 1. Получаем ссылку для загрузки (upload URL)
@@ -42,7 +47,7 @@ function FileUpload() {
         'https://cloud-api.yandex.net/v1/disk/resources/upload',
         {
           params: {
-            path: `/programs/${selectedFile.name}`, // Путь, куда мы хотим загрузить файл
+            path: `${pathPrograms}${selectedFile.name}`, // Путь, куда мы хотим загрузить файл
             overwrite: 'true', // Перезаписывать файл, если он уже существует
           },
           headers: {
@@ -66,7 +71,7 @@ function FileUpload() {
 
       // 3. Получаем информацию о файле, чтобы взять ссылку
       const fileInfoResponse = await axios.get(
-        `https://cloud-api.yandex.net/v1/disk/resources?path=/programs/${selectedFile.name}`,
+        `https://cloud-api.yandex.net/v1/disk/resources?path=${pathPrograms}${selectedFile.name}`,
         {
           headers: {
             Authorization: `OAuth ${token}`,
@@ -75,8 +80,8 @@ function FileUpload() {
       );
 
       console.log(fileInfoResponse)
-
       const publicUrl = fileInfoResponse.data.file;
+
 
       setUploadedFileLink(publicUrl);
       console.log('Ссылка на файл:', publicUrl); //  Выводим ссылку в консоль
@@ -86,6 +91,8 @@ function FileUpload() {
       console.error('Ошибка загрузки файла:', error);
     } finally {
       setUploading(false);
+      setProgress(false);
+      setSelectedFile(null);
     }
   };
 
@@ -93,30 +100,12 @@ function FileUpload() {
   const clearFile = () => setSelectedFile(null);
 
   return (
-    // <div>
-    //   <h2>Загрузка файла в Яндекс.Диск</h2>
-    //   <input
-    //     type="file"
-    //     onChange={handleFileChange}
-    //     name="file"
-    //     accept=".pdf"
-    //   />
-    //   <button onClick={handleUpload} disabled={!selectedFile || uploading}>
-    //     {uploading ? 'Загрузка...' : 'Загрузить'}
-    //   </button>
-    //   {uploadError && <p style={{ color: 'red' }}>Ошибка: {uploadError}</p>}
-    // </div>
-
-
 
   <div
     className="userPage__card-form">
 
-
     <div className="userPage__card-upload">
       <label className="button button-success">
-
-        {/*<CircularProgress size={24} color="#fff" />*/}
 
         {
           selectedFile ? (
@@ -161,8 +150,16 @@ function FileUpload() {
         className="userPage__card-upload-send-file button button-send-file"
         title="Отправить файл в базу данных"
       >
-        <span>Отправить</span>
-        <SendRoundedIcon sx={{fontSize: 24}} />
+
+        {
+          progress ? (<span>Загрузка...</span>) : (
+            <>
+              <span>Отправить</span>
+              <SendRoundedIcon sx={{fontSize: 24}} />
+            </>
+          )
+        }
+
       </button>
     }
 
