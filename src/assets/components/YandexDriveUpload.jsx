@@ -1,5 +1,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
+import DriveFolderUploadIcon from "@mui/icons-material/DriveFolderUpload";
+import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
+import SendRoundedIcon from "@mui/icons-material/SendRounded";
 
 function FileUpload() {
   const [selectedFile, setSelectedFile] = useState(null);
@@ -86,20 +89,88 @@ function FileUpload() {
     }
   };
 
+  // Очистка файла из input
+  const clearFile = () => setSelectedFile(null);
+
   return (
-    <div>
-      <h2>Загрузка файла в Яндекс.Диск</h2>
-      <input
-        type="file"
-        onChange={handleFileChange}
-        name="file"
-        accept=".pdf"
-      />
-      <button onClick={handleUpload} disabled={!selectedFile || uploading}>
-        {uploading ? 'Загрузка...' : 'Загрузить'}
-      </button>
-      {uploadError && <p style={{ color: 'red' }}>Ошибка: {uploadError}</p>}
+    // <div>
+    //   <h2>Загрузка файла в Яндекс.Диск</h2>
+    //   <input
+    //     type="file"
+    //     onChange={handleFileChange}
+    //     name="file"
+    //     accept=".pdf"
+    //   />
+    //   <button onClick={handleUpload} disabled={!selectedFile || uploading}>
+    //     {uploading ? 'Загрузка...' : 'Загрузить'}
+    //   </button>
+    //   {uploadError && <p style={{ color: 'red' }}>Ошибка: {uploadError}</p>}
+    // </div>
+
+
+
+  <div
+    className="userPage__card-form">
+
+
+    <div className="userPage__card-upload">
+      <label className="button button-success">
+
+        {/*<CircularProgress size={24} color="#fff" />*/}
+
+        {
+          selectedFile ? (
+            <span className="userPage__card-upload-text">{selectedFile.name}</span>
+          ) : (
+            <>
+              <DriveFolderUploadIcon />
+              <span className="userPage__card-upload-text">Добавить файл</span>
+            </>
+          )
+        }
+
+
+        <input
+          type="file"
+          hidden
+          onChange={handleFileChange}
+          name="file"
+          accept=".pdf"
+        />
+
+      </label>
+
+      {
+        selectedFile &&
+        <button
+          type="button"
+          className="userPage__card-upload-delete button button-cancel"
+          onClick={clearFile}
+          title="Очистить"
+        >
+          <DeleteOutlineRoundedIcon sx={{fontSize: 30}} />
+        </button>
+      }
     </div>
+
+    {
+      selectedFile &&
+      <button
+        onClick={handleUpload}
+        type="button"
+        className="userPage__card-upload-send-file button button-send-file"
+        title="Отправить файл в базу данных"
+      >
+        <span>Отправить</span>
+        <SendRoundedIcon sx={{fontSize: 24}} />
+      </button>
+    }
+
+  </div>
+
+
+
+
   );
 }
 

@@ -146,7 +146,7 @@ const TourCard = ({ tour, showButtons, accepted }) => {
         </div>
 
         {
-          accepted && <UploadFile tour={tour} userId={tour.userId} />
+          accepted && <YandexDriveUpload />
         }
 
         <div className="userPage__card-buttons">
@@ -160,13 +160,7 @@ const TourCard = ({ tour, showButtons, accepted }) => {
 
           <button onClick={handleOpenModalDetails} className="button button-outline">Подробнее</button>
 
-
         </div>
-
-        {
-          accepted && <YandexDriveUpload/>
-        }
-
 
 
       </article>
