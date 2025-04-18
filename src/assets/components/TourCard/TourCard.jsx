@@ -4,7 +4,6 @@ import { ref, get, update, remove } from "firebase/database";
 import {db} from "../../../firebase.js";
 import ModalTourDesc from "../ModalTourDesc/ModalTourDesc";
 import AlertDialog from "../AlertDialog/AlertDialog";
-import UploadFile from "../UserPage/UploadFile";
 import YandexDriveUpload from "../YandexDriveUpload";
 
 
@@ -22,6 +21,8 @@ const TourCard = ({ tour, showButtons, accepted }) => {
   const [textAlertDialog, setTextAlertDialog] = useState("");
   // Состояние для хранения информации о действии
   const [actionDataAlertDialog, setActionDataAlertDialog] = useState(null);
+
+  const pathUserTour = `users/${tour.userId}/tours/${tour.tourId}`;
 
 
   const fetchUserData = async () => {
@@ -57,7 +58,7 @@ const TourCard = ({ tour, showButtons, accepted }) => {
 
 // Установка статуса заявки в БД (отклонено/принято)
   async function updateTourStatus (status) {
-    const tourRef = ref(db, `users/${tour.userId}/tours/${tour.tourId}`);
+    const tourRef = ref(db, pathUserTour);
     try {
       await update(tourRef, { status: status });
     } catch (error) {
@@ -110,7 +111,7 @@ const TourCard = ({ tour, showButtons, accepted }) => {
   };
 
   async function deleteTour () {
-    const tourRef = ref(db, `users/${tour.userId}/tours/${tour.tourId}`);
+    const tourRef = ref(db, pathUserTour);
     try {
       await remove(tourRef);
     } catch (error) {
@@ -118,6 +119,16 @@ const TourCard = ({ tour, showButtons, accepted }) => {
     }
   };
 
+
+  // Добавление ссылки на загруженный документ (pdf-программа) в БД
+  async function addUrlDoc (urlDoc) {
+    const tourRef = ref(db, pathUserTour);
+    try {
+      await update(tourRef, { urlDoc: urlDoc });
+    } catch (error) {
+      console.error('Ошибка при добавлении ссылки на документ:', error);
+    }
+  };
 
   const handleAccept = () => handleAction("accept");
   const handleReject = () => handleAction("reject");
@@ -145,9 +156,6 @@ const TourCard = ({ tour, showButtons, accepted }) => {
             {tour.date_start} — {tour.date_end}</div>
         </div>
 
-        {
-          accepted && <YandexDriveUpload />
-        }
 
         <div className="userPage__card-buttons">
           {
@@ -157,6 +165,11 @@ const TourCard = ({ tour, showButtons, accepted }) => {
               <button onClick={() => handleAccept(tour.tourId)} className="button button-success">Принять</button>
             </>
           }
+
+          {
+            accepted && <YandexDriveUpload addUrlDoc={addUrlDoc} tour={tour} />
+          }
+
 
           <button onClick={handleOpenModalDetails} className="button button-outline">Подробнее</button>
 

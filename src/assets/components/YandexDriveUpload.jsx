@@ -1,36 +1,61 @@
-import React, { useState } from 'react';
+import React, {useEffect, useState} from 'react';
 import axios from 'axios';
 import DriveFolderUploadIcon from "@mui/icons-material/DriveFolderUpload";
 import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
 import SendRoundedIcon from "@mui/icons-material/SendRounded";
-import CircularProgress from '@mui/material/CircularProgress';
+import LinkIcon from '@mui/icons-material/Link';
 
-function FileUpload() {
+import { ref, get, update, remove } from "firebase/database";
+import {db} from "../../firebase.js";
+
+
+
+function YandexDriveUpload( { addUrlDoc, tour } ) {
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(false);
   const [uploadedFileLink, setUploadedFileLink] = useState(null);
   const [uploadError, setUploadError] = useState(null);
+  const [urlDocFromDb, setUrlDocFromDb] = useState("");
   const token = "y0__xCYtPUGGNuWAyCNzKrtEue3WMzrz30qDYbI1DhSasqfKHrs"; // Получаем токен из .env
 
   const pathPrograms = "/programs/";
 
+
   const handleFileChange = (event) => {
-    setSelectedFile(event.target.files[0]);
+    const file = event.target.files[0];
+    setSelectedFile(file);
     setUploadedFileLink(null); // Сброс ссылки при выборе нового файла
     setUploadError(null);      // Сброс ошибки
   };
+
+  async function checkUrlDoc(tour) {
+    const tourRef = ref(db, `users/${tour.userId}/tours/${tour.tourId}`);
+
+    try {
+      const snapshot = await get(tourRef);
+      if (snapshot.exists() && snapshot.hasChild('urlDoc')) {
+        const existingUrlDoc = snapshot.child('urlDoc').val();
+        console.log(existingUrlDoc);
+        setUrlDocFromDb(existingUrlDoc);
+      }
+    } catch (error) {
+      console.error('Ошибка при получении ссылки на документ:', error);
+    }
+  };
+
 
   const handleUpload = async () => {
     if (!selectedFile) {
       alert('Пожалуйста, выберите файл.');
       return;
-    }
+    };
 
     if (!token) {
       alert('Токен доступа к Яндекс.Диску не найден. Убедитесь, что он установлен в .env');
       return;
     }
+
 
     setUploading(true);
     setUploadError(null);
@@ -50,9 +75,7 @@ function FileUpload() {
             path: `${pathPrograms}${selectedFile.name}`, // Путь, куда мы хотим загрузить файл
             overwrite: 'true', // Перезаписывать файл, если он уже существует
           },
-          headers: {
-            Authorization: `OAuth ${token}`,
-          },
+          headers: {Authorization: `OAuth ${token}`},
         }
       );
 
@@ -60,9 +83,7 @@ function FileUpload() {
 
       // 2. Загружаем файл (PUT запрос)
       await axios.put(uploadUrl, selectedFile, {
-        headers: {
-          'Content-Type': selectedFile.type, // Устанавливаем Content-Type
-        },
+        headers: {'Content-Type': selectedFile.type},
         onUploadProgress: (progressEvent) => {
           // Можно добавить логику для отображения прогресса загрузки
           //console.log('Загружено', progressEvent.loaded, 'из', progressEvent.total);
@@ -73,20 +94,17 @@ function FileUpload() {
       const fileInfoResponse = await axios.get(
         `https://cloud-api.yandex.net/v1/disk/resources?path=${pathPrograms}${selectedFile.name}`,
         {
-          headers: {
-            Authorization: `OAuth ${token}`,
-          },
-        }
-      );
+          headers: {Authorization: `OAuth ${token}`},
+        });
 
-      console.log(fileInfoResponse)
+      // Получение ссылки на файл
       const publicUrl = fileInfoResponse.data.file;
-
-
       setUploadedFileLink(publicUrl);
-      console.log('Ссылка на файл:', publicUrl); //  Выводим ссылку в консоль
-      // Тут можно добавить код для сохранения ссылки в другую БД
-    } catch (error) {
+      addUrlDoc(publicUrl);
+
+    }
+
+    catch (error) {
       setUploadError(error.message || 'Произошла ошибка при загрузке файла.');
       console.error('Ошибка загрузки файла:', error);
     } finally {
@@ -94,7 +112,11 @@ function FileUpload() {
       setProgress(false);
       setSelectedFile(null);
     }
+
   };
+
+  checkUrlDoc(tour);
+
 
   // Очистка файла из input
   const clearFile = () => setSelectedFile(null);
@@ -105,29 +127,42 @@ function FileUpload() {
     className="userPage__card-form">
 
     <div className="userPage__card-upload">
-      <label className="button button-success">
 
-        {
-          selectedFile ? (
-            <span className="userPage__card-upload-text">{selectedFile.name}</span>
-          ) : (
-            <>
-              <DriveFolderUploadIcon />
-              <span className="userPage__card-upload-text">Добавить файл</span>
-            </>
-          )
-        }
+      {
+        !urlDocFromDb ? (
+
+          <label className="button button-success">
+
+            {
+                selectedFile ? (
+                  <span className="userPage__card-upload-text">{selectedFile.name}</span>
+                ) : (
+                  <>
+                    <DriveFolderUploadIcon />
+                    <span className="userPage__card-upload-text">Добавить файл</span>
+                  </>
+                )
+            }
+
+            <input
+              type="file"
+              hidden
+              onChange={handleFileChange}
+              name="file"
+              accept=".pdf"
+            />
+
+          </label>
+
+        ) : (
+          <a href={urlDocFromDb} target="_blank" className="button button-send-file userPage__card-upload-link">
+            <LinkIcon />
+            <span className="userPage__card-upload-text">Программа</span>
+          </a>
+        )
+      }
 
 
-        <input
-          type="file"
-          hidden
-          onChange={handleFileChange}
-          name="file"
-          accept=".pdf"
-        />
-
-      </label>
 
       {
         selectedFile &&
@@ -165,10 +200,7 @@ function FileUpload() {
 
   </div>
 
-
-
-
   );
 }
 
-export default FileUpload;
+export default YandexDriveUpload;

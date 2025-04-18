@@ -76,6 +76,7 @@
     &-data-item
       display: flex
       justify-content: space-between
+      align-items: center
       gap: 8px
       border-bottom: 1px solid rgba(#fff, 0.3)
       font-size: 20px
@@ -101,11 +102,12 @@
     &-form
       display: flex
       flex-direction: column
-      gap: 16px
+      gap: 12px
+      grid-column: 1 / -1
 
     &-upload
       display: flex
-      gap: 16px
+      gap: 12px
       label
         display: flex
         justify-content: center
@@ -134,3 +136,9 @@
           transition: $transition
         &:hover svg
           transform: translateX(10px)
+
+      &-link
+        display: flex
+        align-items: center
+        justify-content: center
+        gap: 8px

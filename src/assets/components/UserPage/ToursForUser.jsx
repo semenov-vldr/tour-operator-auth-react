@@ -9,7 +9,7 @@ const ToursForUser = (status, userId) => {
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    let unsubscribe; // Declare unsubscribe variable
+    let unsubscribe;
 
     const loadData = () => {
       setLoading(true);
@@ -23,12 +23,12 @@ const ToursForUser = (status, userId) => {
 
       const toursRef = ref(db, `users/${userId}/tours`);
 
-      unsubscribe = onValue(toursRef, (snapshot) => { // Store the unsubscribe function
+      unsubscribe = onValue(toursRef, (snapshot) => {
         if (snapshot.exists()) {
           const toursData = snapshot.val();
           const toursArray = Object.entries(toursData)
             .filter(([, tour]) => tour.status === status)
-            .map(([tourId, tourData]) => ({ // Include tourId
+            .map(([tourId, tourData]) => ({
               tourId: tourId,
               ...tourData,
             }));
@@ -49,7 +49,7 @@ const ToursForUser = (status, userId) => {
 
     return () => {
       if (unsubscribe) {
-        off(ref(db, `users/${userId}/tours`), 'value', unsubscribe); // Detach the listener
+        off(ref(db, `users/${userId}/tours`), 'value', unsubscribe);
       }
     };
   }, [status, userId]);
