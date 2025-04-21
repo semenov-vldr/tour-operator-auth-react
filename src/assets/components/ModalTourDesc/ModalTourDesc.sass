@@ -6,22 +6,33 @@
   top: 50%
   left: 50%
   transform: translate(-50%, -50%)
-  max-width: 600px
+  max-width: 900px
   width: 100%
-  background-color: whitesmoke
-  padding: 24px
+  background-color: #182533
+  color: #fff
+  padding: 32px
   border-radius: 24px
   max-height: 90vh
   overflow-y: auto
   @include mobile
-    padding: 16px
+    padding: 24px
 
   h2
-    text-decoration: underline
     text-align: center
+    font-size: 28px
+    @include mobile
+      font-size: 24px
+
+  &__close
+    display: block
+    margin-left: auto
+
 
   &__content
     margin-top: 32px
+    padding: 0 16px
+    @include mobile
+      padding: 0
   &__list
     display: flex
     flex-direction: column
@@ -33,13 +44,16 @@
     display: flex
     gap: 32px
     justify-content: space-between
+    font-size: 20px
+    font-weight: 400
     &:not(:last-child)
       padding-bottom: 8px
-      border-bottom: 1px solid #000
+      border-bottom: 1px solid rgba(#fff, 0.3)
     @include mobile
       gap: 16px
+      font-size: 16px
     @media (max-width: 400px)
       flex-direction: column
       gap: 8px
-    span:nth-child(1)
+    span:nth-child(2)
       font-weight: 600

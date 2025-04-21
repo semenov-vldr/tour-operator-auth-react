@@ -48,85 +48,85 @@ const UserPage = () => {
         {
           !authLoading &&
           <>
-          <section className="userPage__section">
-            <h2 className="title-section yellow">Новые заявки</h2>
+            <section className="userPage__section">
+              <h2 className="title-section yellow">Новые заявки</h2>
 
-            {
-              !newLoading ? (
+              {
+                !newLoading ? (
 
-                <div className="userPage__cards">
-                  {
-                    newTours.length > 0 ? (
-                      newTours.map(newTour => (
-                        <TourCard
-                          key={newTour.tourId}
-                          tour={newTour}
-                          showButtons={false}
-                        />
-                      ))
-                    ) : <div>Новых заявок нет</div>
-                  }
+                  <div className="userPage__cards">
+                    {
+                      newTours.length > 0 ? (
+                        newTours.map(newTour => (
+                          <TourCard
+                            key={newTour.tourId}
+                            tour={newTour}
+                            showButtons={false}
+                          />
+                        ))
+                      ) : <div>Новых заявок нет</div>
+                    }
+                  </div>
+                ) :  <div className="userPage__cards">
+                  <SkeletonCardTemplate />
+                  <SkeletonCardTemplate />
                 </div>
-              ) :  <div className="userPage__cards">
-                <SkeletonCardTemplate />
-                <SkeletonCardTemplate />
-              </div>
-            }
-          </section>
+              }
+            </section>
 
-          <section className="userPage__section">
-          <h2 className="title-section green">Одобренные заявки</h2>
+            <section className="userPage__section">
+              <h2 className="title-section green">Одобренные заявки</h2>
 
-        {
-          !acceptedLoading ? (
-          <div className="userPage__cards">
-        {
-          acceptedTours.length > 0 && (
-          acceptedTours.map(acceptedTour => (
-          <TourCard
-          key={acceptedTour.tourId}
-          tour={acceptedTour}
-          showButtons={false}
-          />
-          ))
-          ) || <span>Одобренных заявок нет</span>
-        }
-          </div>
-          ) : <div className="userPage__cards">
-            <SkeletonCardTemplate />
-            <SkeletonCardTemplate />
-          </div>
-        }
-          </section>
+              {
+                !acceptedLoading ? (
+                  <div className="userPage__cards">
+                    {
+                      acceptedTours.length > 0 && (
+                        acceptedTours.map(acceptedTour => (
+                          <TourCard
+                            key={acceptedTour.tourId}
+                            tour={acceptedTour}
+                            showButtons={false}
+                            isUser={true}
+                          />
+                        ))
+                      ) || <span>Одобренных заявок нет</span>
+                    }
+                  </div>
+                ) : <div className="userPage__cards">
+                  <SkeletonCardTemplate />
+                  <SkeletonCardTemplate />
+                </div>
+              }
+            </section>
 
-          <section className="userPage__section">
-          <h2 className="title-section red">Отклоненные заявки</h2>
+            <section className="userPage__section">
+              <h2 className="title-section red">Отклоненные заявки</h2>
 
-        {
-          !rejectedLoading ? (
-          <div className="userPage__cards">
-        {
-          rejectedTours.length > 0 && (
-          rejectedTours.map(rejectedTour => (
-          <TourCard
-          key={rejectedTour.tourId}
-          tour={rejectedTour}
-          showButtons={false}
-          />
-          ))
-          ) || <span>Отклоненных заявок нет</span>
-        }
-          </div>
-          ) : <div className="userPage__cards">
-            <SkeletonCardTemplate />
-            <SkeletonCardTemplate />
-          </div>
-        }
-          </section>
+              {
+                !rejectedLoading ? (
+                  <div className="userPage__cards">
+                    {
+                      rejectedTours.length > 0 && (
+                        rejectedTours.map(rejectedTour => (
+                          <TourCard
+                            key={rejectedTour.tourId}
+                            tour={rejectedTour}
+                            showButtons={false}
+                          />
+                        ))
+                      ) || <span>Отклоненных заявок нет</span>
+                    }
+                  </div>
+                ) : <div className="userPage__cards">
+                  <SkeletonCardTemplate />
+                  <SkeletonCardTemplate />
+                </div>
+              }
+            </section>
           </>
 
         }
-
 
       </div>
     </main>

@@ -1,14 +1,15 @@
 import CloseIcon from "../../icons/close.svg";
-import {useEffect, useState} from "react";
+import React, {useEffect, useState} from "react";
 import { ref, get, update, remove } from "firebase/database";
 import {db} from "../../../firebase.js";
 import ModalTourDesc from "../ModalTourDesc/ModalTourDesc";
 import AlertDialog from "../AlertDialog/AlertDialog";
 import YandexDriveUpload from "../YandexDriveUpload";
+import LinkIcon from "@mui/icons-material/Link";
 
 
 
-const TourCard = ({ tour, showButtons, accepted }) => {
+const TourCard = ({ tour, showButtons, accepted, isUser= false }) => {
 
   const [userData, setUserData] = useState([]);
   // Определяем по какой карточки тура кликнули кнопку "Подробнее" для вызова модального окна
@@ -21,6 +22,8 @@ const TourCard = ({ tour, showButtons, accepted }) => {
   const [textAlertDialog, setTextAlertDialog] = useState("");
   // Состояние для хранения информации о действии
   const [actionDataAlertDialog, setActionDataAlertDialog] = useState(null);
+  // Ссылка на документ из БД
+  const [urlDocFromDb, setUrlDocFromDb] = useState("");
 
   const pathUserTour = `users/${tour.userId}/tours/${tour.tourId}`;
 
@@ -134,7 +137,29 @@ const TourCard = ({ tour, showButtons, accepted }) => {
   const handleReject = () => handleAction("reject");
   const handleDelete = () => handleAction("delete");
 
-  // ------------------------
+
+
+  // ------ Добавление ссылки на файл у пользователя, если она есть
+  useEffect(() => {
+
+    async function checkUrlDoc(tour) {
+      const tourRef = ref(db, pathUserTour);
+
+      try {
+        const snapshot = await get(tourRef);
+        if (snapshot.exists() && snapshot.hasChild('urlDoc')) {
+          const existingUrlDoc = snapshot.child('urlDoc').val();
+          setUrlDocFromDb(existingUrlDoc);
+        }
+      } catch (error) {
+        console.error('Ошибка при получении ссылки на документ:', error);
+      }
+    };
+    checkUrlDoc(tour);
+  }, [tour]);
+
+  //----------------------------------------------------------------
+
 
   return (
     <>
@@ -170,6 +195,13 @@ const TourCard = ({ tour, showButtons, accepted }) => {
             accepted && <YandexDriveUpload addUrlDoc={addUrlDoc} tour={tour} />
           }
 
+          {
+            urlDocFromDb && isUser &&
+            <a href={urlDocFromDb} target="_blank" className="button button-send-file userPage__card-upload-link">
+              <LinkIcon />
+              <span className="userPage__card-upload-text">Программа</span>
+            </a>
+          }
 
           <button onClick={handleOpenModalDetails} className="button button-outline">Подробнее</button>
 

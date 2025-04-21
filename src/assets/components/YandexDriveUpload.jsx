@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, {useEffect, useState, useRef } from 'react';
 import axios from 'axios';
 import DriveFolderUploadIcon from "@mui/icons-material/DriveFolderUpload";
 import DeleteOutlineRoundedIcon from "@mui/icons-material/DeleteOutlineRounded";
@@ -7,10 +7,13 @@ import LinkIcon from '@mui/icons-material/Link';
 
 import { ref, get, update, remove } from "firebase/database";
 import {db} from "../../firebase.js";
+//import checkUrlDoc from "../hooks/checkUrlDoc.js";
 
 
 
 function YandexDriveUpload( { addUrlDoc, tour } ) {
+  const uRef = useRef();
+
   const [selectedFile, setSelectedFile] = useState(null);
   const [uploading, setUploading] = useState(false);
   const [progress, setProgress] = useState(false);
@@ -29,20 +32,24 @@ function YandexDriveUpload( { addUrlDoc, tour } ) {
     setUploadError(null);      // Сброс ошибки
   };
 
-  async function checkUrlDoc(tour) {
-    const tourRef = ref(db, `users/${tour.userId}/tours/${tour.tourId}`);
+  useEffect(() => {
+    async function checkUrlDoc(tour) {
+      const tourRef = ref(db, `users/${tour.userId}/tours/${tour.tourId}`);
 
-    try {
-      const snapshot = await get(tourRef);
-      if (snapshot.exists() && snapshot.hasChild('urlDoc')) {
-        const existingUrlDoc = snapshot.child('urlDoc').val();
-        console.log(existingUrlDoc);
-        setUrlDocFromDb(existingUrlDoc);
+      try {
+        const snapshot = await get(tourRef);
+        if (snapshot.exists() && snapshot.hasChild('urlDoc')) {
+          const existingUrlDoc = snapshot.child('urlDoc').val();
+          //console.log(existingUrlDoc);
+          setUrlDocFromDb(existingUrlDoc);
+        }
+      } catch (error) {
+        console.error('Ошибка при получении ссылки на документ:', error);
       }
-    } catch (error) {
-      console.error('Ошибка при получении ссылки на документ:', error);
-    }
-  };
+    };
+    checkUrlDoc(tour);
+  }, [tour]);
+
 
 
   const handleUpload = async () => {
@@ -115,25 +122,25 @@ function YandexDriveUpload( { addUrlDoc, tour } ) {
 
   };
 
-  checkUrlDoc(tour);
-
-
   // Очистка файла из input
-  const clearFile = () => setSelectedFile(null);
+  const clearFile = () => {
+    setSelectedFile(null);
+    uRef.current.value = "";
+  }
 
   return (
 
-  <div
-    className="userPage__card-form">
+    <div
+      className="userPage__card-form">
 
-    <div className="userPage__card-upload">
+      <div className="userPage__card-upload">
 
-      {
-        !urlDocFromDb ? (
+        {
+          !urlDocFromDb ? (
 
-          <label className="button button-success">
+            <label className="button button-success">
 
-            {
+              {
                 selectedFile ? (
                   <span className="userPage__card-upload-text">{selectedFile.name}</span>
                 ) : (
@@ -142,63 +149,64 @@ function YandexDriveUpload( { addUrlDoc, tour } ) {
                     <span className="userPage__card-upload-text">Добавить файл</span>
                   </>
                 )
-            }
+              }
 
-            <input
-              type="file"
-              hidden
-              onChange={handleFileChange}
-              name="file"
-              accept=".pdf"
-            />
+              <input
+                type="file"
+                hidden
+                onChange={handleFileChange}
+                name="file"
+                accept=".pdf"
+                ref={uRef}
+              />
 
-          </label>
+            </label>
 
-        ) : (
-          <a href={urlDocFromDb} target="_blank" className="button button-send-file userPage__card-upload-link">
-            <LinkIcon />
-            <span className="userPage__card-upload-text">Программа</span>
-          </a>
-        )
-      }
+          ) : (
+            <a href={urlDocFromDb} target="_blank" className="button button-send-file userPage__card-upload-link">
+              <LinkIcon />
+              <span className="userPage__card-upload-text">Программа</span>
+            </a>
+          )
+        }
 
 
+
+        {
+          selectedFile &&
+          <button
+            type="button"
+            className="userPage__card-upload-delete button button-cancel"
+            onClick={clearFile}
+            title="Очистить"
+          >
+            <DeleteOutlineRoundedIcon sx={{fontSize: 30}} />
+          </button>
+        }
+      </div>
 
       {
         selectedFile &&
         <button
+          onClick={handleUpload}
           type="button"
-          className="userPage__card-upload-delete button button-cancel"
-          onClick={clearFile}
-          title="Очистить"
+          className="userPage__card-upload-send-file button button-send-file"
+          title="Отправить файл в базу данных"
         >
-          <DeleteOutlineRoundedIcon sx={{fontSize: 30}} />
+
+          {
+            progress ? (<span>Загрузка...</span>) : (
+              <>
+                <span>Отправить</span>
+                <SendRoundedIcon sx={{fontSize: 24}} />
+              </>
+            )
+          }
+
         </button>
       }
+
     </div>
-
-    {
-      selectedFile &&
-      <button
-        onClick={handleUpload}
-        type="button"
-        className="userPage__card-upload-send-file button button-send-file"
-        title="Отправить файл в базу данных"
-      >
-
-        {
-          progress ? (<span>Загрузка...</span>) : (
-            <>
-              <span>Отправить</span>
-              <SendRoundedIcon sx={{fontSize: 24}} />
-            </>
-          )
-        }
-
-      </button>
-    }
-
-  </div>
 
   );
 }
