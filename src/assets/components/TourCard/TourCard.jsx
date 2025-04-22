@@ -1,4 +1,4 @@
-import CloseIcon from "../../icons/close.svg";
+import CloseIcon from '@mui/icons-material/Close';
 import React, {useEffect, useState} from "react";
 import { ref, get, update, remove } from "firebase/database";
 import {db} from "../../../firebase.js";
@@ -167,7 +167,8 @@ const TourCard = ({ tour, showButtons, accepted, isUser= false }) => {
         <div className="userPage__card-top">
           <span className="userPage__card-sender">{userData.legal_name || "Компания неизвестна"}</span>
           <button onClick={() => handleDelete(tour.tourId)} className="userPage__card-close" title="Удалить заявку">
-            <img src={CloseIcon} />
+
+            <CloseIcon />
           </button>
         </div>
 

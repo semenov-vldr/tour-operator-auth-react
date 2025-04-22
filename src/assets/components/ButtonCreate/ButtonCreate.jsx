@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { useState, useEffect } from "react";
-import { Button, TextField, MenuItem, Box, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, InputLabel } from '@mui/material';
+import { Button, TextField, MenuItem, Box, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, InputLabel, Snackbar } from '@mui/material';
 
 import { onAuthStateChanged } from 'firebase/auth';
 import { ref, push, update } from "firebase/database";
@@ -42,6 +42,33 @@ const ButtonCreate = () => {
       </Alert>
     );
   }
+
+
+  function AutohideSnackbar() {
+    const handleClose = (evt, reason) => {
+      if (reason === 'clickaway') {
+        return;
+      }
+      setShowAlert(false);
+    };
+
+    const text = "Ваша заявка на тур успешно создана и отправлена. Менеджер SPB Travel Group с вами свяжется.";
+
+    return (
+      <div>
+        <Snackbar open={showAlert} autoHideDuration={5000} onClose={handleClose}>
+          <Alert
+            onClose={handleClose}
+            severity="success"
+            variant="filled"
+            sx={{ width: '100%' }}
+          >
+            {text}
+          </Alert>
+        </Snackbar>
+      </div>
+    )
+  };
 
 
   const handleClickOpen = () => setOpen(true);
@@ -117,7 +144,7 @@ const ButtonCreate = () => {
       Новая заявка
       <img className="button-create__icon" src={AddIcon} />
     </button>
-    {showAlert && <SimpleAlert />}
+    {showAlert && <AutohideSnackbar />}
     <Dialog
       open={open}
       onClose={handleClose}

@@ -1,6 +1,6 @@
 import { Modal, Box, Typography } from '@mui/material';
 import "./ModalTourDesc.sass";
-import CloseIcon from "../../icons/close.svg";
+import CloseIcon from '@mui/icons-material/Close';
 
 
 const ModalTourDesc = ({tour, userData, isOpen, onClose}) => {
@@ -13,7 +13,7 @@ const ModalTourDesc = ({tour, userData, isOpen, onClose}) => {
 
       <Box className="modal">
         <button onClick={onClose} className="modal__close">
-          <img src={CloseIcon} width="32" />
+          <CloseIcon />
         </button>
         <Typography variant="h6" component="h2">
           Данные по туру:
